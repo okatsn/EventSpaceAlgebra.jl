@@ -1,8 +1,7 @@
 struct UnitMismatch <: Exception end
 Base.showerror(io::IO, e::UnitMismatch) = print(io, "Unit mistach.")
 
-struct CoordinateMismatch <: Exception end
-Base.showerror(io::IO, e::CoordinateMismatch) = print(io, "Coordinate mistach.")
+
 
 """
 Check if two objects of `ValueUnit` has the same unit.

@@ -57,15 +57,35 @@
         Distance(121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
     )
 
+    # Coordinate of different type should not be addable
     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
-    @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
-    @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, JulianDay) - Coordinate(EventTime, 22.3, JulianDay)
     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
 
+    # Distance substracted by Coordinate is unreasonable
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, JulianDay) - Coordinate(EventTime, 22.3, JulianDay)
+
+    # test set_value!
     lg122 = Longitude(122, Degree)
     set_value!(lg122, 123)
     @test isequal(lg122, Longitude(123, Degree))
-    # TODO:
-    # - Distance of the same unit is subtractable/addable
-    # - T<:Spatial can be subtracted by Y<:...
+
+
+    # test addition
+    @test_throws EventSpaceAlgebra.UnitMismatch EventSpaceAlgebra._create_add(
+        Longitude(1.1, Degree),
+        EventTime(1, JulianDay)
+    )
+    cs = [Longitude, Latitude, EventTime]
+    ut = [Degree, Degree, JulianDay]
+    for (constructor, unit) in zip(cs, ut)
+        @test_throws EventSpaceAlgebra.CoordinateMismatch constructor(1, unit) + constructor(1, unit)
+    end
+
+    c1s = [Longitude, Latitude, EventTime, Distance]
+    c2s = [Distance, Distance, Distance, Distance]
+    uts = [Degree, Degree, JulianDay, Degree]
+    for (c1, c2, unit) in zip(c1s, c2s, uts)
+        @test isequal(c1(1, unit) + c2(1, unit), c1(2, unit))
+    end
 end
