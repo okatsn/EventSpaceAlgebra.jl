@@ -62,6 +62,9 @@
     @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, JulianDay) - Coordinate(EventTime, 22.3, JulianDay)
     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
 
+    lg122 = Longitude(122, Degree)
+    set_value!(lg122, 123)
+    @test isequal(lg122, Longitude(123, Degree))
     # TODO:
     # - Distance of the same unit is subtractable/addable
     # - T<:Spatial can be subtracted by Y<:...

@@ -11,6 +11,14 @@ get_value(S::AbstractSpace) = get_value(S.vu)
 get_unit(vu::ValueUnit) = vu.unit
 get_value(vu::ValueUnit) = vu.value
 
+function set_value!(vu::ValueUnit, val)
+    vu.value = val
+    nothing
+end
+set_value!(abss::AbstractSpace, val) = set_value!(abss.vu, val)
+
+
+
 """
 The interface for constructing any concrete type belongs to `Coordinate`.
 
