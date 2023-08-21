@@ -1,4 +1,10 @@
 ## CHECKPOINT: You don't need to define `isequal` when ValueUnit is immutable.
+# - `==` and thus `isequal` depend on `hash`
+# - `DataFrames.groupby` also depends on `hash`
+# - `mutable struct`s are hashed by reference, thus `ValueUnit(1, Degree) == ValueUnit(1, Degree)` returns `false` for `mutable struct ValueUnit ...end`.
+# - `groupby` also group different constructs of the same `mutable struct`s into different groups, even they hold exactly the same contents.
+# - I failed to write a `hash` for my AbstractSpace, as below. However, problem solved when I change ValueUnit to `mutable struct`.
+#
 # function Base.hash(as1::AbstractSpace)
 #     h1 = hash(get_value(as1))
 #     hash(get_unit(as1), h1)
