@@ -1,5 +1,6 @@
 module EventSpaceAlgebra
 
-# Write your package code here.
+include("timespacetypes.jl")
+export Longitude, Latitude, EventTime, Degree, JulianDay, AngularDistance, EpochDuration, ValueUnit, GeneralSpace, Distance
 
 end
