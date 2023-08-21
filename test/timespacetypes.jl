@@ -57,19 +57,21 @@
         Distance(121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
     )
 
-    # Coordinate of different type should not be addable
+    # test set_value!
+    lg122 = Longitude(122, Degree)
+    set_value!(lg122, 123)
+    @test isequal(lg122, Longitude(123, Degree))
+
+end
+
+@testset "Test Addition" begin
+    # Coordinate of different type should not be subtractable
     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
 
     # Distance substracted by Coordinate is unreasonable
     @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     @test_throws EventSpaceAlgebra.CoordinateMismatch Distance(121.33, JulianDay) - Coordinate(EventTime, 22.3, JulianDay)
-
-    # test set_value!
-    lg122 = Longitude(122, Degree)
-    set_value!(lg122, 123)
-    @test isequal(lg122, Longitude(123, Degree))
-
 
     # test addition
     @test_throws EventSpaceAlgebra.UnitMismatch EventSpaceAlgebra._create_add(
