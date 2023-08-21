@@ -47,9 +47,7 @@ performs addition of their `value`, and return a copy of `gs1` with the `value` 
 function _create_add(gs1, gs2)
     sameunit(gs1, gs2)
     newval = get_value(gs1) + get_value(gs2)
-    gs1a = deepcopy(gs1)
-    set_value!(gs1a, newval)
-    return gs1a
+    return set_value(gs1, newval)
 end
 
 """

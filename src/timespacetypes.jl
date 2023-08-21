@@ -1,7 +1,7 @@
 """
 `ValueUnit` is a simple mutable concrete structure that holds a `value` and the `unit::GeneralUnit` of the value.
 """
-mutable struct ValueUnit
+struct ValueUnit
     value
     unit::Type{<:GeneralUnit}
 end
@@ -11,11 +11,8 @@ get_value(S::AbstractSpace) = get_value(S.vu)
 get_unit(vu::ValueUnit) = vu.unit
 get_value(vu::ValueUnit) = vu.value
 
-function set_value!(vu::ValueUnit, val)
-    vu.value = val
-    nothing
-end
-set_value!(abss::AbstractSpace, val) = set_value!(abss.vu, val)
+set_value(vu::ValueUnit, val) = ValueUnit(val, vu.unit)
+set_value(abss::AbstractSpace, val) = typeof(abss)(set_value(abss.vu, val))
 
 
 

@@ -57,10 +57,9 @@
         Distance(121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
     )
 
-    # test set_value!
+    # test set_value
     lg122 = Longitude(122, Degree)
-    set_value!(lg122, 123)
-    @test isequal(lg122, Longitude(123, Degree))
+    @test isequal(set_value(lg122, 123), Longitude(123, Degree))
 
 end
 
@@ -90,4 +89,26 @@ end
     for (c1, c2, unit) in zip(c1s, c2s, uts)
         @test isequal(c1(1, unit) + c2(1, unit), c1(2, unit))
     end
+end
+
+@testset "DataFrame grouping" begin
+    using DataFrames
+    df = DataFrame(
+        :Lat => repeat(22.1:0.1:22.3, inner=[4]),
+        :Lon => repeat(122.1:0.1:122.4, outer=[3]),
+        :Time => repeat(1.1:0.1:1.6, outer=[2]))
+
+    @test length(groupby(df, [:Lat])) == 3
+    @test length(groupby(df, [:Lon])) == 4
+    @test length(groupby(df, [:Time])) == 6
+
+    transform!(df, :Time => ByRow(x -> EventTime(x, JulianDay)); renamecols=false)
+    transform!(df, :Lat => ByRow(x -> Latitude(x, Degree)); renamecols=false)
+    transform!(df, :Lon => ByRow(x -> Longitude(x, Degree)); renamecols=false)
+    # hdf = nrow(df)
+
+    @test length(groupby(df, [:Lat])) == 3
+    @test length(groupby(df, [:Lon])) == 4
+    @test length(groupby(df, [:Time])) == 6
+
 end
