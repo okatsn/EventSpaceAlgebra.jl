@@ -3,7 +3,7 @@ include("abstractspace.jl")
 include("timespacetypes.jl")
 include("algebra/sameunit.jl")
 include("algebra/comparisonop.jl")
-include("algebra/addsubstract.jl")
+include("algebra/addsubtract.jl")
 
 export Longitude, Latitude, EventTime, Degree, JulianDay, AngularDistance, EpochDuration, ValueUnit
 

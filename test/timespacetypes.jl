@@ -40,7 +40,29 @@
     @test isapprox(
         Coordinate(Longitude, 121.33, Degree) - Coordinate(Longitude, 110.0, Degree), Distance(11.33, Degree)
     )
+    @test isapprox(
+        Coordinate(Longitude, 121.33, Degree) - Distance(110.0, Degree), Distance(11.33, Degree)
+    )
+    @test isapprox(
+        Distance(121.33, Degree) - Distance(110.0, Degree), Distance(11.33, Degree)
+    )
+
+    @test isapprox(
+        Coordinate(EventTime, 121.33, JulianDay) - Coordinate(EventTime, 110.0, JulianDay), Distance(11.33, JulianDay)
+    )
+    @test isapprox(
+        Coordinate(EventTime, 121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
+    )
+    @test isapprox(
+        Distance(121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
+    )
+
+    @test EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
+    @test EventSpaceAlgebra.CoordinateMismatch Distance(121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
+    @test EventSpaceAlgebra.CoordinateMismatch Distance(121.33, JulianDay) - Coordinate(EventTime, 22.3, JulianDay)
+    @test EventSpaceAlgebra.UnitMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
+
     # TODO:
-    # - Distance of the same unit is substractable/addable
-    # - T<:Spatial can be substracted by Y<:...
+    # - Distance of the same unit is subtractable/addable
+    # - T<:Spatial can be subtracted by Y<:...
 end
