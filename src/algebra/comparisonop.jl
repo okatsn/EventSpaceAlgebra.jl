@@ -10,5 +10,5 @@ end
 
 function Base.isless(gs1::T, gs2::T) where {T<:AbstractSpace}
     sameunit(gs1, gs2)
-    isless(get_value(gs1), get_value(gs2)) # This makes `extrema`, `maximum` and `minimum` works with `GeneralSpace`.
+    isless(get_value(gs1), get_value(gs2)) # This makes `extrema`, `maximum` and `minimum` works with `Coordinate`.
 end

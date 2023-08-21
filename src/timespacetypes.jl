@@ -1,7 +1,3 @@
-struct Degree <: Angular end
-struct JulianDay <: EpochTime end
-
-
 """
 `ValueUnit` is a simple mutable concrete structure that holds a `value` and the `unit::GeneralUnit` of the value.
 """
@@ -16,21 +12,24 @@ get_unit(vu::ValueUnit) = vu.unit
 get_value(vu::ValueUnit) = vu.value
 
 """
-The interface for constructing any concrete type belongs to `GeneralSpace`.
+The interface for constructing any concrete type belongs to `Coordinate`.
 
 # Example
 ```jldoctest
-Longitude(ValueUnit(1, Degree)) == GeneralSpace(Longitude, 1, Degree)
+Longitude(ValueUnit(1, Degree)) == Coordinate(Longitude, 1, Degree)
 
 # output
 
 true
 ```
 """
-function GeneralSpace(t::Type{<:GeneralSpace}, value, unit)
+function Coordinate(t::Type{<:Coordinate}, value, unit)
     t(ValueUnit(value, unit))
 end
 
+
+
+# # SECTION: Concrete struct of `Coordinate`
 struct Longitude <: Spatial
     vu::ValueUnit
 end
@@ -48,12 +47,18 @@ end
 EventTime(v, u) = EventTime(ValueUnit(v, u))
 
 
+# # SECTION: Concrete struct of `GeneralUnit`
+struct Degree <: Angular end
+struct JulianDay <: EpochTime end
+
+
 
 # Distance(value, unit::Type{<:Angular}) = AngularDistance(value, unit)
 # Distance(value, unit::Type{<:EpochTime}) = EpochDuration(value, unit)
 
 """
 Function `disttype` defines the one-to-one correspondance between `U::GeneralUnit` and `T::Distance`; it returns the type/constructor `T`.
+`disttype` is essential for `Distance` to construct an `Distance` struct.
 
 List:
 - `disttype(::Type{<:Angular}) = AngularDistance`
@@ -88,7 +93,7 @@ true
    end
    ```
 2. `struct NewDistUnit <: GeneralUnitOrOneOfItsAbstractType end`
-3. `distype(::Type{<:GeneralUnitOrOneOfItsAbstractType}) = NewDistance`
+3. `disttype(::Type{<:GeneralUnitOrOneOfItsAbstractType}) = NewDistance`
 
 
 See also: `disttype`.
@@ -98,6 +103,7 @@ function Distance(value, unit)
     t(ValueUnit(value, unit))
 end
 
+# # SECTION: Concrete struct of `Distance`
 struct AngularDistance <: Distance
     vu::ValueUnit
     # function AngularDistance(value, unit::Type{<:Angular})
