@@ -1,16 +1,3 @@
-abstract type AbstractSpace end
-
-"""
-Abstract type `GeneralSpace` are the supertype for all dimension/coordinate specification concrete `struct`s of `ValueUnit`, such as `Longitude`, `Latitude` and `EventTime`.
-"""
-abstract type GeneralSpace <: AbstractSpace end
-abstract type Spatial <: GeneralSpace end
-abstract type Temporal <: GeneralSpace end
-
-
-abstract type GeneralUnit end
-abstract type Angular <: GeneralUnit end
-abstract type EpochTime <: GeneralUnit end
 struct Degree <: Angular end
 struct JulianDay <: EpochTime end
 
@@ -60,12 +47,7 @@ struct EventTime <: Temporal
 end
 EventTime(v, u) = EventTime(ValueUnit(v, u))
 
-"""
-`Distance` is the supertype for all types of "distance" on "GeneralSpace".
-- Distance derived from multiple dimensional is beyond the scope of `Distance`.
-- Each concrete struct of `GeneralUnit` corresponds to the only concrete struct of `Distance`
-"""
-abstract type Distance <: AbstractSpace end
+
 
 # Distance(value, unit::Type{<:Angular}) = AngularDistance(value, unit)
 # Distance(value, unit::Type{<:EpochTime}) = EpochDuration(value, unit)
@@ -133,45 +115,3 @@ struct EpochDuration <: Distance
     # end
 end
 EpochDuration(v, u) = EpochDuration(ValueUnit(v, u))
-
-
-
-struct UnitMismatch <: Exception end
-Base.showerror(io::IO, e::UnitMismatch) = print(io, "Unit mistach.")
-
-
-
-"""
-Check if two objects of `ValueUnit` has the same unit.
-"""
-function sameunit(gs1, gs2)
-    _sametype(get_unit(gs1), get_unit(gs2))
-end
-
-_sametype(a::Type{T}, b::Type{T}) where {T<:GeneralUnit} = true
-_sametype(a, b) = throw(UnitMismatch())
-
-function Base.isless(gs1::T, gs2::T) where {T<:AbstractSpace}
-    sameunit(gs1, gs2)
-    isless(get_value(gs1), get_value(gs2)) # This makes `extrema`, `maximum` and `minimum` works with `GeneralSpace`.
-end
-
-
-function Base.:-(gs1::T, gs2::T) where {T<:GeneralSpace}
-    sameunit(gs1, gs2)
-    Distance(get_value(gs1) - get_value(gs2), get_unit(gs1)) # extend `-` makes `diff` works with `GeneralSpace`
-end
-# CHECKPOINT
-
-Base.:+(gs1::GeneralSpace, gs2::GeneralSpace) = get_value(gs1) + get_value(gs2)
-
-
-
-function Base.:(==)(as1::AbstractSpace, as2::AbstractSpace)
-    isequal(get_unit(as1), get_unit(as2)) && isequal(get_value(as1), get_value(as2))
-end
-
-
-function Base.isapprox(as1::AbstractSpace, as2::AbstractSpace)
-    isequal(get_unit(as1), get_unit(as2)) && isapprox(get_value(as1), get_value(as2))
-end
