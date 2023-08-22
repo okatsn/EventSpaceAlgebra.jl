@@ -1,15 +1,16 @@
 name = "EventSpaceAlgebra"
 uuid = "8edd2f2a-3081-48b8-b943-5251c412605e"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "0.1.0"
-
-[compat]
-julia = "1.9"
+version = "0.2.0"
 
 [extras]
 CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+
+[compat]
+julia = "1.6 - 1.9"
 
 [targets]
-test = ["Test", "Documenter", "CompatHelperLocal"]
+test = ["Test", "Documenter", "CompatHelperLocal", "DataFrames"]
