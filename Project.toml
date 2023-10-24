@@ -1,7 +1,7 @@
 name = "EventSpaceAlgebra"
 uuid = "8edd2f2a-3081-48b8-b943-5251c412605e"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
