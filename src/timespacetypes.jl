@@ -54,9 +54,32 @@ EventTime(v, u) = EventTime(ValueUnit(v, u))
 
 # # SECTION: Concrete struct of `GeneralUnit`
 struct Degree <: Angular end
+
+"""
+`struct JulianDay <: EpochTime end`.
+
+# Example
+
+```jldoctest x15aw
+using Dates, EventSpaceAlgebra
+evt = EventTime(2451545, JulianDay) # create an `EventTime` in absolute `JulianDay`.
+DateTime(evt) # convert it to `DateTime`
+
+# output
+
+2000-01-01T12:00:00
+```
+
+```jldoctest x15aw
+EventTime(2451545, JulianDay) + Distance(3, JulianDay) |> DateTime
+
+# output
+2000-01-04T12:00:00
+```
+
+"""
 struct JulianDay <: EpochTime end
-
-
+struct DummyDayForTest <: EpochTime end
 
 # Distance(value, unit::Type{<:Angular}) = AngularDistance(value, unit)
 # Distance(value, unit::Type{<:EpochTime}) = EpochDuration(value, unit)
