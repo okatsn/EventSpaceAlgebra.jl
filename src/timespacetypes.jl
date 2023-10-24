@@ -55,8 +55,7 @@ EventTime(v, u) = EventTime(ValueUnit(v, u))
 # # SECTION: Concrete struct of `GeneralUnit`
 struct Degree <: Angular end
 struct JulianDay <: EpochTime end
-
-
+struct DummyDayForTest <: EpochTime end
 
 # Distance(value, unit::Type{<:Angular}) = AngularDistance(value, unit)
 # Distance(value, unit::Type{<:EpochTime}) = EpochDuration(value, unit)
