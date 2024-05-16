@@ -1,13 +1,13 @@
 name = "EventSpaceAlgebra"
 uuid = "8edd2f2a-3081-48b8-b943-5251c412605e"
 authors = ["okatsn <okatsn@gmail.com> and contributors"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
 [compat]
-julia = "1.6 - 1.9"
+julia = "1.6"
 
 [extras]
 CompatHelperLocal = "5224ae11-6099-4aaa-941d-3aab004bd678"
