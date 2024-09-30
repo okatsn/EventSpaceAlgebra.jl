@@ -1,4 +1,7 @@
 module EventSpaceAlgebra
+
+using Unitful
+
 include("abstractspace.jl")
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
