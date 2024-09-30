@@ -1,4 +1,4 @@
-## CHECKPOINT: You don't need to define `isequal` when ValueUnit is immutable.
+## KEYNOTE (Old): You don't need to define `isequal` when ValueUnit is immutable.
 # - `==` and thus `isequal` depend on `hash`
 # - `DataFrames.groupby` also depends on `hash`
 # - `mutable struct`s are hashed by reference, thus `ValueUnit(1, Degree) == ValueUnit(1, Degree)` returns `false` for `mutable struct ValueUnit ...end`.
@@ -10,17 +10,4 @@
 #     hash(get_unit(as1), h1)
 # end
 
-# function Base.:(==)(as1::AbstractSpace, as2::AbstractSpace)
-#     isequal(get_unit(as1), get_unit(as2)) && isequal(get_value(as1), get_value(as2))
-# end
-
-# `isapprox` is required, since the unit should be exactly the same && value is approximately the same
-function Base.isapprox(as1::AbstractSpace, as2::AbstractSpace)
-    isequal(get_unit(as1), get_unit(as2)) && isapprox(get_value(as1), get_value(as2))
-end
-
-# This makes `extrema`, `maximum` and `minimum` works with `Coordinate`.
-function Base.isless(gs1::T, gs2::T) where {T<:AbstractSpace}
-    sameunit(gs1, gs2)
-    isless(get_value(gs1), get_value(gs2))
-end
+# TODO: define `isapprox` and `isless` ... for eventTime-wise, Latitude-wise and Longitude-wise comparison.
