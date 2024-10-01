@@ -32,29 +32,64 @@ end
 
 ```jldoctest
 using EventSpaceAlgebra, Unitful
-EventTime(5, ms_epoch) == EventTime(5u"ms_epoch") == EventTime(Quantity(5u"ms_epoch"))
+EventTime(5, ms_epoch) == EventTime(5u"ms_epoch") == EventTime(Quantity(5u"ms_epoch")) == EventTimeMS(5)
 
 # output
 
 true
 ```
 """
-EventTime(n::Int, u::typeof(ms_epoch)) = EventTime(Quantity(n, u))
+EventTime(n, ::typeof(ms_epoch)) = EventTimeMS(n)
 
 """
 # Example
 
 ```jldoctest
 using EventSpaceAlgebra, Unitful
-EventTime(5, jd) == EventTime(5u"jd") == EventTime(Quantity(5u"jd"))
+EventTime(5, jd) == EventTime(5u"jd") == EventTime(Quantity(5u"jd")) == EventTimeJD(5)
 
 # output
 
 true
 ```
 """
-EventTime(n::Int, u::typeof(jd)) = EventTime(Quantity(n, u))
+EventTime(n, ::typeof(jd)) = EventTimeJD(n)
 
+
+# Explicitly define EventTimeMS
+const EventTimeMS = EventTime{Int,typeof(ms_epoch)}
+
+"""
+# Example
+
+```jldoctest
+using EventSpaceAlgebra
+EventTime(5, ms_epoch) == EventTimeMS(5)
+
+# output
+
+true
+```
+"""
+EventTimeMS(n) = EventTime(Quantity(n, ms_epoch))
+
+
+# Explicitly define EventTimeJD
+const EventTimeJD = EventTime{Float64,typeof(jd)}
+
+"""
+# Example
+
+```jldoctest
+using EventSpaceAlgebra
+EventTime(5.1, jd) == EventTimeJD(5.1)
+
+# output
+
+true
+```
+"""
+EventTimeJD(n) = EventTime(Quantity(n, jd))
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})
@@ -62,9 +97,6 @@ EventTime(n::Int, u::typeof(jd)) = EventTime(Quantity(n, u))
 #     delta_ms = Millisecond(dt - epoch)
 #     EventTime{EpochMillisecond}(delta_ms.value * u"EpochMillisecond")
 # end
-
-# # Optional
-# const EventTimeMS = EventTime{EpochMillisecond}
 
 
 # # Constructor from DateTime to JulianDay

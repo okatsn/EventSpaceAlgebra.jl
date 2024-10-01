@@ -7,7 +7,7 @@ function __init__()
 end
 export ms_epoch, jd
 include("abstractspace.jl")
-export EventTime
+export EventTime, EventTimeJD, EventTimeMS
 
 
 include("timespacetypes.jl")
