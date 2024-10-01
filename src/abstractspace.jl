@@ -6,6 +6,7 @@
 """
 `EventTime{T,U}` with `value` `Quantity{T,Unitful.𝐓,U}`.
 
+It allows any kind of unit dimension time (`𝐓`); however,
 
 # Example
 
@@ -25,7 +26,35 @@ struct EventTime{T,U}
     value::Quantity{T,Unitful.𝐓,U}
 end
 
-# TODO: Another EventTime constructor that does not rely on Unitful.
+# Other EventTime constructors that does not rely on Unitful.
+"""
+# Example
+
+```jldoctest
+using EventSpaceAlgebra, Unitful
+EventTime(5, ms_epoch) == EventTime(5u"ms_epoch") == EventTime(Quantity(5u"ms_epoch"))
+
+# output
+
+true
+```
+"""
+EventTime(n::Int, u::typeof(ms_epoch)) = EventTime(Quantity(n, u))
+
+"""
+# Example
+
+```jldoctest
+using EventSpaceAlgebra, Unitful
+EventTime(5, jd) == EventTime(5u"jd") == EventTime(Quantity(5u"jd"))
+
+# output
+
+true
+```
+"""
+EventTime(n::Int, u::typeof(jd)) = EventTime(Quantity(n, u))
+
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})

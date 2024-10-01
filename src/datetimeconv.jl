@@ -7,6 +7,5 @@ end
 function to_datetime(t::EventTime{T,typeof(jd)}) where {T}
     Dates.julian2datetime(t.value.val)
 end
-Dates.DateTime(evt::EventTime) = to_datetime(evt)
 
-# TODO: create `to_datetime` function.
+Dates.DateTime(evt::EventTime) = to_datetime(evt)
