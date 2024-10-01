@@ -5,7 +5,7 @@ include("unitfulunits.jl")
 function __init__()
     Unitful.register(@__MODULE__)
 end
-export EpochMillisecond, JulianDay
+export ms_epoch, jd
 include("abstractspace.jl")
 export EventTime
 
@@ -19,4 +19,5 @@ include("algebra/addsubtract.jl")
 
 using Dates
 include("datetimeconv.jl")
+export to_datetime
 end

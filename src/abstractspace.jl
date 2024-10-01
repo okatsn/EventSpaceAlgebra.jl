@@ -1,11 +1,31 @@
-"""
-Abstract type `AbstractCoordinate` are the supertype for all dimension/coordinate specification, such as `Longitude`, `Latitude` and `EventTime`.
-"""
-abstract type AbstractCoordinate{U} end
+# """
+# Abstract type `AbstractCoordinate` are the supertype for all dimension/coordinate specification, such as `Longitude`, `Latitude` and `EventTime`.
+# """
+# abstract type AbstractCoordinate{D,U} end
 
-struct EventTime{U} <: AbstractCoordinate{U}
-    value::Quantity{Float64,U}
+"""
+`EventTime{T,U}` with `value` `Quantity{T,Unitful.𝐓,U}`.
+
+
+# Example
+
+```jldoctest
+
+using EventSpaceAlgebra, Unitful
+EventTime(5u"ms_epoch")
+
+true
+
+# output
+
+true
+```
+"""
+struct EventTime{T,U}
+    value::Quantity{T,Unitful.𝐓,U}
 end
+
+# TODO: Another EventTime constructor that does not rely on Unitful.
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})
