@@ -1,6 +1,6 @@
 using Test
 # using TestItems
-using EventSpaceAlgebra
+using EventSpaceAlgebra, Unitful
 
 function targetlist(targetexpr::Regex, dir2walk::AbstractString)
     # targetexpr = r"(\.jl)$";
@@ -34,7 +34,7 @@ using Documenter
     # See also https://documenter.juliadocs.org/stable/man/doctests/#Setup-Code
 
 
-    doctest(EventSpaceAlgebra; manual = false) # this makes jldoctest also be tested in a local test
+    doctest(EventSpaceAlgebra; manual=false) # this makes jldoctest also be tested in a local test
 end
 
 using CompatHelperLocal
