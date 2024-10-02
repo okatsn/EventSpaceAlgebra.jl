@@ -4,9 +4,11 @@
 # abstract type AbstractCoordinate{D,U} end
 
 """
-`EventTime{T,U}` with `value` `Quantity{T,Unitful.𝐓,U}`.
+`EventTime{T,U}` with a `value` of `Quantity{T,Unitful.𝐓,U}`.
 
-It allows any kind of unit dimension time (`𝐓`); however,
+It allows any kind of unit dimension time (`𝐓`).
+
+It is recommended to always use `EventTimeXXX` (e.g., `EventTimeJD`, `EventTimeMS`) instead when possible.
 
 # Example
 
@@ -46,7 +48,7 @@ EventTime(n, ::typeof(ms_epoch)) = EventTimeMS(n)
 
 ```jldoctest
 using EventSpaceAlgebra, Unitful
-EventTime(5, jd) == EventTime(5u"jd") == EventTime(Quantity(5u"jd")) == EventTimeJD(5)
+EventTime(5.0, jd) == EventTime(5.0u"jd") == EventTime(Quantity(5.0u"jd")) == EventTimeJD(5.0)
 
 # output
 
@@ -57,27 +59,67 @@ EventTime(n, ::typeof(jd)) = EventTimeJD(n)
 
 
 # Explicitly define EventTimeMS
-const EventTimeMS = EventTime{Int,typeof(ms_epoch)}
-
+# # The purpose of defining the const EventTimeMS is for a specific concrete type mapping (i.e., Integer with the unit of ms_epoch).
 """
-# Example
+`EventTimeMS` is the abstract type for dispatching `EventTime` of `typeof(ms_epoch)`.
+
+See https://docs.julialang.org/en/v1/manual/types/#UnionAll-Types
+and https://docs.julialang.org/en/v1/manual/types/#Type-Aliases
+
+Noted that since `EventTimeMS` is abstract, the `EventTime` interface is not available.
 
 ```jldoctest
-using EventSpaceAlgebra
+julia> using EventSpaceAlgebra, Unitful
+
+julia> EventTimeMS(5u"ms_epoch")
+ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Int64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+
+julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method
+ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+```
+
+"""
+const EventTimeMS = EventTime{T,typeof(ms_epoch)} where {T<:Real}
+
+"""
+`EventTimeMS(n::Real)`.
+
+# Example
+
+```jldoctest testmsep
+using EventSpaceAlgebra, Unitful
 EventTime(5, ms_epoch) == EventTimeMS(5)
 
 # output
 
 true
 ```
+
+```jldoctest testmsep
+typeof(EventTime(5, ms_epoch)) <: EventTimeMS
+
+# output
+
+true
+
+```
 """
-EventTimeMS(n) = EventTime(Quantity(n, ms_epoch))
+EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
+
 
 
 # Explicitly define EventTimeJD
-const EventTimeJD = EventTime{Float64,typeof(jd)}
+"""
+`EventTimeJD` is the abstract type for dispatching `EventTime` of `typeof(jd)`.
+
+See `EventTimeMS` for more information.
+"""
+const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
+# TODO: Check whether it is equivalent to EventTimeJD{T} = ...
 
 """
+`EventTimeJD(n::Real)`.
+
 # Example
 
 ```jldoctest
@@ -88,8 +130,45 @@ EventTime(5.1, jd) == EventTimeJD(5.1)
 
 true
 ```
+
+```jldoctest
+using EventSpaceAlgebra
+typeof(EventTimeJD(5)) == typeof(EventTimeJD(5.0))
+
+# output
+
+false
+```
+
+```jldoctest testjd
+julia> using EventSpaceAlgebra, Unitful
+```
+
+```jldoctest testjd
+julia> a = EventTime(5.0, jd)
+EventTimeJD{Float64}(5.0 jd)
+
+julia> b = EventTime(5u"jd")
+EventTimeJD{Int64}(5 jd)
+
+julia> EventTimeJD{Int64}
+EventTimeJD{Int64} (alias for EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
+
+julia> typeof(a) <: EventTimeJD
+true
+
+julia> typeof(b) <: EventTimeJD
+true
+
+
+julia> to_datetime(a)
+-4713-11-29T12:00:00
+
+julia> to_datetime(b)
+-4713-11-29T12:00:00
+```
 """
-EventTimeJD(n) = EventTime(Quantity(n, jd))
+EventTimeJD(n::Real) = EventTime(Quantity(n, jd))
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})
