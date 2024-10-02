@@ -61,60 +61,64 @@ EventTime(n, ::typeof(jd)) = EventTimeJD(n)
 # Explicitly define EventTimeMS
 # # The purpose of defining the const EventTimeMS is for a specific concrete type mapping (i.e., Integer with the unit of ms_epoch).
 """
-`EventTimeMS` is the type of `EventTime{Int,typeof(ms_epoch)}`.
+`EventTimeMS` is the abstract type for dispatching `EventTime` of `typeof(ms_epoch)`.
 
 See https://docs.julialang.org/en/v1/manual/types/#UnionAll-Types
 and https://docs.julialang.org/en/v1/manual/types/#Type-Aliases
 
-"""
-const EventTimeMS = EventTime{Int,typeof(ms_epoch)}
+Noted that since `EventTimeMS` is abstract, the `EventTime` interface is not available.
+
+```jldoctest
+julia> using EventSpaceAlgebra, Unitful
+
+julia> EventTimeMS(5u"ms_epoch")
+ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Int64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+
+julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method
+ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+```
 
 """
-`EventTimeMS(n::Int)`.
+const EventTimeMS = EventTime{T,typeof(ms_epoch)} where {T<:Real}
+
+"""
+`EventTimeMS(n::Real)`.
 
 # Example
 
 ```jldoctest testmsep
 using EventSpaceAlgebra, Unitful
-EventTime(5, ms_epoch) == EventTimeMS(5) == EventTimeMS(5u"ms_epoch") == EventTimeMS(5.0u"ms_epoch")
+EventTime(5, ms_epoch) == EventTimeMS(5)
 
 # output
 
 true
 ```
 
-Noted that `EventTimeMS(5.0u"ms_epoch")` works due to `Unitful`'s conversion that will try to convert `Float64` to `Int`.
-
-Noted that `EventTimeMS(n)` for `n` other than `Int` it will be dispatched to the inner constructor, i.e., `EventTime{...}(n)`, and may throw error:
-
 ```jldoctest testmsep
-julia> EventTimeMS(5u"ms_epoch") # Dispatched to `EventTime` method (legal input)
-EventTimeMS(5 ms_epoch)
+typeof(EventTime(5, ms_epoch)) <: EventTimeMS
 
-julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method (legal input)
-EventTimeMS(5 ms_epoch)
+# output
 
-julia> EventTimeMS(5) # Dispatched to `EventTimeMS` method. (expected usage)
-EventTimeMS(5 ms_epoch)
+true
 
-julia> EventTimeMS(5.0) # Dispatched to `EventTime` method (illegal input)
-ERROR: DimensionError: ms_epoch and 5.0 are not dimensionally compatible.
-[...]
 ```
-
 """
-EventTimeMS(n::Int) = EventTimeMS(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
+EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
 
 
 
 # Explicitly define EventTimeJD
 """
-`EventTimeJD` is the type of `EventTime{Float64,typeof(jd)}`.
+`EventTimeJD` is the abstract type for dispatching `EventTime` of `typeof(jd)`.
+
+See `EventTimeMS` for more information.
 """
-const EventTimeJD = EventTime{Float64,typeof(jd)}
+const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
+# TODO: Check whether it is equivalent to EventTimeJD{T} = ...
 
 """
-`EventTimeJD(n::Float64)`.
+`EventTimeJD(n::Real)`.
 
 # Example
 
@@ -129,14 +133,12 @@ true
 
 ```jldoctest
 using EventSpaceAlgebra
-typeof(EventTime(0.1, jd)) == typeof(EventTimeJD(5.1))
+typeof(EventTimeJD(5)) == typeof(EventTimeJD(5.0))
 
 # output
 
-true
+false
 ```
-
-Noted that the `EventTime` with integer Julian Day (`jd`) can be accepted, but not `EventTimeJD` and won't be dispatched to such as `to_datetime`.
 
 ```jldoctest testjd
 julia> using EventSpaceAlgebra, Unitful
@@ -144,19 +146,29 @@ julia> using EventSpaceAlgebra, Unitful
 
 ```jldoctest testjd
 julia> a = EventTime(5.0, jd)
-EventTimeJD(5.0 jd)
+EventTimeJD{Float64}(5.0 jd)
 
 julia> b = EventTime(5u"jd")
-EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}}(5 jd)
+EventTimeJD{Int64}(5 jd)
+
+julia> EventTimeJD{Int64}
+EventTimeJD{Int64} (alias for EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
+
+julia> typeof(a) <: EventTimeJD
+true
+
+julia> typeof(b) <: EventTimeJD
+true
+
 
 julia> to_datetime(a)
 -4713-11-29T12:00:00
 
 julia> to_datetime(b)
-ERROR: MethodError: no method matching to_datetime(::EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
+-4713-11-29T12:00:00
 ```
 """
-EventTimeJD(n::Float64) = EventTimeJD(Quantity(n, jd))
+EventTimeJD(n::Real) = EventTime(Quantity(n, jd))
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})

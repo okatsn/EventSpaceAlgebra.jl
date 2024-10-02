@@ -7,7 +7,9 @@
     absms = Dates.datetime2epochms(dt)
     d_epoch = Dates.datetime2julian(dt)
     evt1 = EventTime(absms * u"ms_epoch")
+    evt1a = EventTimeMS(absms)
     evt2 = EventTime(d_epoch * u"jd")
-    @test to_datetime(evt1) == dt
-    @test to_datetime(evt2) == dt
+    evt2a = EventTimeJD(d_epoch)
+    @test to_datetime(evt1) == to_datetime(evt1a) == dt
+    @test to_datetime(evt2) == to_datetime(evt2a) == dt
 end
