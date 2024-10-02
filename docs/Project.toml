@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 EventSpaceAlgebra = "8edd2f2a-3081-48b8-b943-5251c412605e"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"

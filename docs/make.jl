@@ -16,6 +16,7 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Event Time" => "event_time.md",
     ],
 )
 

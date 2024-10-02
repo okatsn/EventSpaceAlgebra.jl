@@ -115,7 +115,9 @@ EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical ot
 See `EventTimeMS` for more information.
 """
 const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
-# TODO: Check whether it is equivalent to EventTimeJD{T} = ...
+# It is equivalent:
+# EventTimeJD{T} = EventTime{T,typeof(jd)} where {T<:Real}
+# See https://docs.julialang.org/en/v1/manual/types/#UnionAll-Types
 
 """
 `EventTimeJD(n::Real)`.
