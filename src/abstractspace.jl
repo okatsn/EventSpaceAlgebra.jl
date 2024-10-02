@@ -106,7 +106,21 @@ true
 """
 EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
 
+"""
+# Example
 
+Convert `DateTime` to `EventTimeMS`:
+
+```jldoctest
+julia> using Dates, EventSpaceAlgebra
+
+julia> dt = DateTime(2022, 1, 1);
+
+julia> EventTimeMS(dt) == EventTimeMS(Dates.datetime2epochms(dt))
+true
+```
+"""
+EventTimeMS(dt::DateTime) = EventTimeMS(Dates.datetime2epochms(dt))
 
 # Explicitly define EventTimeJD
 """
@@ -171,6 +185,25 @@ julia> to_datetime(b)
 ```
 """
 EventTimeJD(n::Real) = EventTime(Quantity(n, jd))
+
+
+"""
+# Example
+
+Convert `DateTime` to `EventTimeJD`:
+
+```jldoctest
+julia> using Dates, EventSpaceAlgebra
+
+julia> dt = DateTime(2022, 1, 1);
+
+julia> EventTimeJD(dt) == EventTimeJD(Dates.datetime2julian(dt))
+true
+```
+"""
+EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
+
+
 
 # # Constructor from DateTime to EpochMillisecond
 # function EventTime(dt::DateTime, ::Type{EpochMillisecond})

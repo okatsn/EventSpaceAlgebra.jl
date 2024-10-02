@@ -6,6 +6,8 @@ function __init__()
     Unitful.register(@__MODULE__)
 end
 export ms_epoch, jd
+
+using Dates
 include("abstractspace.jl")
 export EventTime, EventTimeJD, EventTimeMS
 
