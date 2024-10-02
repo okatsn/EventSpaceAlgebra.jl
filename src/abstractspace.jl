@@ -12,6 +12,8 @@ It is recommended to always use `EventTimeXXX` (e.g., `EventTimeJD`, `EventTimeM
 
 # Example
 
+Use with `Unitful` to define `EventTime` of arbitrary units:
+
 ```jldoctest
 
 using EventSpaceAlgebra, Unitful
@@ -23,6 +25,22 @@ true
 
 true
 ```
+
+# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
+# CHECKPOINT: Do I need a `uconvert` for the conversion between `EventTimeMS` and `EventTimeJD`?
+
+Conversion between `ms_epoch` and `jd`:
+
+```
+evt_ms = EventTimeMS(123)
+evt_jd = uconvert(u"jd", evt_ms.value)
+EventTime(evt_jd) == evt_ms
+
+# output
+
+true # FIXME: not a jldoctest yet.
+```
+
 """
 struct EventTime{T,U}
     value::Quantity{T,Unitful.𝐓,U}

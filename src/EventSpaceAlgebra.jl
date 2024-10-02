@@ -11,6 +11,8 @@ using Dates
 include("abstractspace.jl")
 export EventTime, EventTimeJD, EventTimeMS
 
+include("spatial.jl")
+export Longitude, Latitude
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
