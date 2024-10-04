@@ -1,7 +1,5 @@
-# """
-# Abstract type `AbstractCoordinate` are the supertype for all dimension/coordinate specification, such as `Longitude`, `Latitude` and `EventTime`.
-# """
-# abstract type AbstractCoordinate{D,U} end
+abstract type EventCoordinate end
+abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 
 """
 `EventTime{T,U}` with a `value` of `Quantity{T,Unitful.𝐓,U}`.
@@ -27,7 +25,6 @@ true
 ```
 
 # TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
-# CHECKPOINT: Do I need a `uconvert` for the conversion between `EventTimeMS` and `EventTimeJD`?
 
 Conversion between `ms_epoch` and `jd`:
 
@@ -42,7 +39,7 @@ true # FIXME: not a jldoctest yet.
 ```
 
 """
-struct EventTime{T,U}
+struct EventTime{T,U} <: TemporalCoordinate{T,U}
     value::Quantity{T,Unitful.𝐓,U}
 end
 
@@ -97,7 +94,7 @@ ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, U
 ```
 
 """
-const EventTimeMS = EventTime{T,typeof(ms_epoch)} where {T<:Real}
+EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 
 """
 `EventTimeMS(n::Real)`.
@@ -122,7 +119,7 @@ true
 
 ```
 """
-EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
+EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Real` is critical otherwise it falls back to `EventTime`.
 
 """
 # Example
@@ -146,9 +143,9 @@ EventTimeMS(dt::DateTime) = EventTimeMS(Dates.datetime2epochms(dt))
 
 See `EventTimeMS` for more information.
 """
-const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
+EventTimeJD{T} = EventTime{T,typeof(jd)} where {T<:Real}
 # It is equivalent:
-# EventTimeJD{T} = EventTime{T,typeof(jd)} where {T<:Real}
+# const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
 # See https://docs.julialang.org/en/v1/manual/types/#UnionAll-Types
 
 """
@@ -223,18 +220,16 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 
-# # Constructor from DateTime to EpochMillisecond
-# function EventTime(dt::DateTime, ::Type{EpochMillisecond})
-#     epoch = DateTime(1970, 1, 1) # FIXME: epoch should be verified. (epoch - datetime2epochms(epoch))
-#     delta_ms = Millisecond(dt - epoch)
-#     EventTime{EpochMillisecond}(delta_ms.value * u"EpochMillisecond")
-# end
-
-
-# # Constructor from DateTime to JulianDay
-# function EventTime(dt::DateTime, ::Type{JulianDay})
-#     jd_value = Dates.datetime2julian(dt)
-#     EventTime{JulianDay}(jd_value * u"JulianDay")
-# end
-
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
+
+const epoch_julian_diff_ms = DateTime(0000, 1, 1) - DateTime(-4713, 11, 24, 12, 00, 00)
+
+
+function EventTimeJD{T}(evt::EventTimeMS) where {T}
+    EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
+end
+
+
+function EventTimeMS{T}(evt::EventTimeJD) where {T}
+    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
+end

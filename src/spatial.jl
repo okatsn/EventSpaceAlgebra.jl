@@ -1,14 +1,15 @@
-const EventAngleDegree{T} = Quantity{T,Unitful.NoDims,typeof(u"°")} where {T<:Real}
-const EventAngleRadian{T} = Quantity{T,NoDims,typeof(u"rad")} where {T<:Real} # This is a shorthand for referring such type, and thus does not exported.
+EventAngleDegree{T} = Quantity{T,Unitful.NoDims,typeof(u"°")} where {T<:Real}
+EventAngleRadian{T} = Quantity{T,NoDims,typeof(u"rad")} where {T<:Real} # This is a shorthand for referring such type, and thus does not exported.
 
-abstract type AngleSpace end
+abstract type AngularCoordinate <: EventCoordinate end
+abstract type DepthCoordinate <: EventCoordinate end
 
 
 latlondocstring(; fnname="Latitude") = """
 `Longitude` and `Latitude` by default defined in the unit of `°` (`\\degree`).
 
 ```
-struct $fnname{T} <: AngleSpace
+struct $fnname{T} <: AngularCoordinate
     value::EventAngleDegree{T}
     $fnname{T}(value::T) where {T<:Real} = new(value * u"°")
 end
@@ -68,7 +69,7 @@ true
 """
 $(latlondocstring())
 """
-struct Latitude{T} <: AngleSpace
+struct Latitude{T} <: AngularCoordinate
     value::EventAngleDegree{T}
 end
 
@@ -79,35 +80,56 @@ end
 """
 $(latlondocstring(;fnname = "Longitude"))
 """
-struct Longitude{T} <: AngleSpace
+struct Longitude{T} <: AngularCoordinate
     value::EventAngleDegree{T}
 end
 
 function Longitude(l::EventAngleRadian{T}) where {T<:Real}
     Longitude(uconvert(u"°", l))
 end
-
-
-# CHECKPOINT: Spatial Units
 # - Since Latitude and Longitude can only be degree or rad within a fixed range, only helper function for converting arbitrary degree (radian) to the ±90°/±180° (±0.5π/±π) is required, and it is no need to define specific units like `ms_epoch` and `jd`, such as `@unit lon "lon" Longitude 1u"°" false` or `@unit lat "lat" Latitude 1u"°" false`
 
-# - Continue from "the unit type (e.g., degrees or radians)"
 
 
-# Latitude and Longitude operations
-function Base.:+(l::Longitude, delta::EventAngleDegree)
-    Longitude(l.value + delta)
+
+
+
+
+
+# # FIXME: Should I need to normalize lon lat? Or should I check whether longitude and latitude are legal?
+# # Normalize latitude to -90° to +90°
+# function normalize(lat::Latitude{U}) where {U}
+#     value_in_deg = uconvert(u"°", lat.value).val
+#     if value_in_deg > 90
+#         value_in_deg = 180 - value_in_deg
+#     elseif value_in_deg < -90
+#         value_in_deg = -180 - value_in_deg
+#     end
+#     Latitude(value_in_deg)
+# end
+
+# # Normalize longitude to -180° to +180°
+# function normalize(lon::Longitude{U}) where {U}
+#     value_in_deg = uconvert(u"°", lon.value).val
+#     value_in_deg = mod(value_in_deg + 180, 360) - 180
+#     Longitude(value_in_deg)
+# end
+
+
+struct Depth{T,U} <: DepthCoordinate
+    value::Quantity{T,Unitful.𝐋,U}
 end
 
-# function Base.:-(lat::Latitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Latitude{U}(lat.value - delta)
-# end
 
-# # Longitude operations
-# function Base.:+(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Longitude{U}(lon.value + delta)
-# end
+"""
+```jldoctest
+julia> using EventSpaceAlgebra, Unitful
 
-# function Base.:-(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Longitude{U}(lon.value - delta)
-# end
+julia> Depth(5)
+Depth{Int64, Unitful.FreeUnits{(km,), 𝐋, nothing}}(5 km)
+
+julia> Depth(5000u"m")
+Depth{Int64, Unitful.FreeUnits{(m,), 𝐋, nothing}}(5000 m)
+```
+"""
+Depth(n::Real) = Depth(n * u"km")
