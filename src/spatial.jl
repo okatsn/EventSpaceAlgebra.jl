@@ -87,31 +87,13 @@ end
 function Longitude(l::EventAngleRadian{T}) where {T<:Real}
     Longitude(uconvert(u"°", l))
 end
-
-
-# CHECKPOINT: Spatial Units
 # - Since Latitude and Longitude can only be degree or rad within a fixed range, only helper function for converting arbitrary degree (radian) to the ±90°/±180° (±0.5π/±π) is required, and it is no need to define specific units like `ms_epoch` and `jd`, such as `@unit lon "lon" Longitude 1u"°" false` or `@unit lat "lat" Latitude 1u"°" false`
 
-# - Continue from "the unit type (e.g., degrees or radians)"
 
 
-# Latitude and Longitude operations
-function Base.:+(l::Longitude, delta::EventAngleDegree)
-    Longitude(l.value + delta)
-end # CHECKPOINT
 
-# function Base.:-(lat::Latitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Latitude{U}(lat.value - delta)
-# end
 
-# # Longitude operations
-# function Base.:+(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Longitude{U}(lon.value + delta)
-# end
 
-# function Base.:-(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
-#     Longitude{U}(lon.value - delta)
-# end
 
 
 # # FIXME: Should I need to normalize lon lat? Or should I check whether longitude and latitude are legal?
