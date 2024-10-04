@@ -250,7 +250,9 @@ Convert `EventTimeMS` to `EventTimeJD`:
 ```jldoctest
 julia> using Dates, EventSpaceAlgebra, Unitful
 
-julia> EventTimeJD{Float64}(EventTimeMS(0)) == EventTimeJD(DateTime(0000, 1, 1))
+julia> evt1 = EventTimeMS(0);
+
+julia> EventTimeJD{Float64}(evt1) == EventTimeJD(DateTime(0000, 1, 1)) == uconvert(jd, evt1, Float64)
 true
 ```
 
@@ -269,7 +271,9 @@ julia> using Dates, EventSpaceAlgebra, Unitful
 
 julia> dt = DateTime(-4713, 11, 24, 12, 00, 00) - DateTime(0000, 1, 1);
 
-julia> EventTimeMS{Int}(EventTimeJD(0)) == EventTimeMS(dt.value)
+julia> evt2 = EventTimeJD(0);
+
+julia> EventTimeMS{Int}(evt2) == EventTimeMS(dt.value) == uconvert(ms_epoch, evt2, Int)
 true
 ```
 
