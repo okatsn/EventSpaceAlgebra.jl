@@ -27,7 +27,6 @@ true
 ```
 
 # TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
-# CHECKPOINT: Do I need a `uconvert` for the conversion between `EventTimeMS` and `EventTimeJD`?
 
 Conversion between `ms_epoch` and `jd`:
 
@@ -97,7 +96,7 @@ ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, U
 ```
 
 """
-const EventTimeMS = EventTime{T,typeof(ms_epoch)} where {T<:Real}
+EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 
 """
 `EventTimeMS(n::Real)`.
@@ -122,7 +121,7 @@ true
 
 ```
 """
-EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Int` is critical otherwise it falls back to `EventTime{Int,typeof(ms_epoch)}(value)`
+EventTimeMS(n::Real) = EventTime(Quantity(n, ms_epoch)) # `::Real` is critical otherwise it falls back to `EventTime`.
 
 """
 # Example
@@ -146,9 +145,9 @@ EventTimeMS(dt::DateTime) = EventTimeMS(Dates.datetime2epochms(dt))
 
 See `EventTimeMS` for more information.
 """
-const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
+EventTimeJD{T} = EventTime{T,typeof(jd)} where {T<:Real}
 # It is equivalent:
-# EventTimeJD{T} = EventTime{T,typeof(jd)} where {T<:Real}
+# const EventTimeJD = EventTime{T,typeof(jd)} where {T<:Real}
 # See https://docs.julialang.org/en/v1/manual/types/#UnionAll-Types
 
 """
@@ -238,3 +237,41 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 # end
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
+
+const epoch_julian_diff_ms = DateTime(0000, 1, 1) - DateTime(-4713, 11, 24, 12, 00, 00)
+
+"""
+Convert `EventTimeMS` to `EventTimeJD`:
+
+# Example
+
+```jldoctest
+julia> using Dates, EventSpaceAlgebra, Unitful
+
+julia> EventTimeJD{Float64}(EventTimeMS(0)) == EventTimeJD(DateTime(0000, 1, 1))
+true
+```
+
+"""
+function EventTimeJD{T}(evt::EventTimeMS) where {T}
+    EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
+end
+
+"""
+Convert `EventTimeJD` to `EventTimeMS`:
+
+# Example
+
+```jldoctest
+julia> using Dates, EventSpaceAlgebra, Unitful
+
+julia> dt = DateTime(-4713, 11, 24, 12, 00, 00) - DateTime(0000, 1, 1);
+
+julia> EventTimeMS{Int}(EventTimeJD(0)) == EventTimeMS(dt.value)
+true
+```
+
+"""
+function EventTimeMS{T}(evt::EventTimeJD) where {T}
+    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
+end
