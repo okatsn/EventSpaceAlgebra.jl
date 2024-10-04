@@ -1,21 +1,10 @@
-const EventAngleDegree{T} = Quantity{T,Unitful.NoDims,typeof(u"°")} where {T}
-
-abstract type AngleSpace end
-
-struct Latitude{T} <: AngleSpace
-    value::EventAngleDegree{T}
-end
-
-struct Longitude{T} <: AngleSpace
-    value::EventAngleDegree{T}
-end
-
 latlondocstring(; fnname="Latitude") = """
 `Longitude` and `Latitude` by default defined in the unit of `°` (`\\degree`).
 
 ```
-struct $fnname{T}
+struct $fnname{T} <: AngleSpace
     value::EventAngleDegree{T}
+    $fnname{T}(value::T) where {T<:Real} = new(value * u"°")
 end
 ```
 
@@ -48,15 +37,26 @@ true
 ```
 """
 
+
+const EventAngleDegree{T} = Quantity{T,Unitful.NoDims,typeof(u"°")} where {T}
+abstract type AngleSpace end
+
+
 """
 $(latlondocstring())
 """
-Latitude(value) = Latitude(value * u"°")
+struct Latitude{T} <: AngleSpace
+    value::EventAngleDegree{T}
+    Latitude{T}(value::T) where {T<:Real} = new(value * u"°")
+end
 
 """
 $(latlondocstring(;fnname = "Longitude"))
 """
-Longitude(value) = Longitude(value * u"°")
+struct Longitude{T} <: AngleSpace
+    value::EventAngleDegree{T}
+    Longitude{T}(value::T) where {T<:Real} = new(value * u"°")
+end
 
 # CHECKPOINT: Spatial Units
 # - Since Latitude and Longitude can only be degree or rad within a fixed range, only helper function for converting arbitrary degree (radian) to the ±90°/±180° (±0.5π/±π) is required, and it is no need to define specific units like `ms_epoch` and `jd`, such as `@unit lon "lon" Longitude 1u"°" false` or `@unit lat "lat" Latitude 1u"°" false`
