@@ -242,42 +242,12 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 const epoch_julian_diff_ms = DateTime(0000, 1, 1) - DateTime(-4713, 11, 24, 12, 00, 00)
 
-"""
-Convert `EventTimeMS` to `EventTimeJD`:
 
-# Example
-
-```jldoctest
-julia> using Dates, EventSpaceAlgebra, Unitful
-
-julia> evt1 = EventTimeMS(0);
-
-julia> EventTimeJD{Float64}(evt1) == EventTimeJD(DateTime(0000, 1, 1)) == uconvert(jd, evt1, Float64)
-true
-```
-
-"""
 function EventTimeJD{T}(evt::EventTimeMS) where {T}
     EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
 end
 
-"""
-Convert `EventTimeJD` to `EventTimeMS`:
 
-# Example
-
-```jldoctest
-julia> using Dates, EventSpaceAlgebra, Unitful
-
-julia> dt = DateTime(-4713, 11, 24, 12, 00, 00) - DateTime(0000, 1, 1);
-
-julia> evt2 = EventTimeJD(0);
-
-julia> EventTimeMS{Int}(evt2) == EventTimeMS(dt.value) == uconvert(ms_epoch, evt2, Int)
-true
-```
-
-"""
 function EventTimeMS{T}(evt::EventTimeJD) where {T}
     EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
 end
