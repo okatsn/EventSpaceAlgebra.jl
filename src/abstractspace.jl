@@ -1,3 +1,5 @@
+abstract type EventCoordinate end
+abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 # """
 # Abstract type `AbstractCoordinate` are the supertype for all dimension/coordinate specification, such as `Longitude`, `Latitude` and `EventTime`.
 # """
@@ -41,7 +43,7 @@ true # FIXME: not a jldoctest yet.
 ```
 
 """
-struct EventTime{T,U}
+struct EventTime{T,U} <: TemporalCoordinate{T,U}
     value::Quantity{T,Unitful.𝐓,U}
 end
 

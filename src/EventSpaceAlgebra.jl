@@ -13,6 +13,9 @@ export EventTime, EventTimeJD, EventTimeMS
 
 include("spatial.jl")
 export Longitude, Latitude
+export Depth
+
+include("uconvert.jl")
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
