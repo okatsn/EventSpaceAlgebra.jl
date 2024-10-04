@@ -1,22 +1,36 @@
+const EventAngleDegree{T} = Quantity{T,Unitful.NoDims,typeof(u"°")} where {T}
 
-mutable struct Latitude{T,U}
-    value::Quantity{T,Unitful.NoDims,U}
+abstract type AngleSpace end
+
+struct Latitude{T} <: AngleSpace
+    value::EventAngleDegree{T}
 end
 
-mutable struct Longitude{T,U}
-    value::Quantity{T,Unitful.NoDims,U}
+struct Longitude{T} <: AngleSpace
+    value::EventAngleDegree{T}
 end
 
 latlondocstring(; fnname="Latitude") = """
 `Longitude` and `Latitude` by default defined in the unit of `°` (`\\degree`).
 
 ```
-mutable struct $fnname{T,U}
-    value::Quantity{T,Unitful.NoDims,U}
+struct $fnname{T}
+    value::EventAngleDegree{T}
 end
 ```
 
-It is mutable, and feel free to convert the `Quantity` to other dimensionless angle units using `Unitful.uconvert`.
+It is not mutable because when converting to it other units such as `m/m` or `rad`, it loses its nature and become a quantity of other meaning.
+
+```jldoctest
+julia> using Unitful, EventSpaceAlgebra
+
+julia> typeof(1u"°") <: EventSpaceAlgebra.EventAngleDegree
+true
+
+julia> typeof(1u"rad") <: EventSpaceAlgebra.EventAngleDegree
+false
+```
+
 
 # Example
 
@@ -46,5 +60,24 @@ Longitude(value) = Longitude(value * u"°")
 
 # CHECKPOINT: Spatial Units
 # - Since Latitude and Longitude can only be degree or rad within a fixed range, only helper function for converting arbitrary degree (radian) to the ±90°/±180° (±0.5π/±π) is required, and it is no need to define specific units like `ms_epoch` and `jd`, such as `@unit lon "lon" Longitude 1u"°" false` or `@unit lat "lat" Latitude 1u"°" false`
-# - The reason for Latitude or Longitude to be mutable is that it is safe to convert the Quantity inside through Unitful framework.
+
 # - Continue from "the unit type (e.g., degrees or radians)"
+
+
+# Latitude and Longitude operations
+function Base.:+(l::Longitude, delta::EventAngleDegree)
+    Longitude(l.value + delta)
+end
+
+# function Base.:-(lat::Latitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Latitude{U}(lat.value - delta)
+# end
+
+# # Longitude operations
+# function Base.:+(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Longitude{U}(lon.value + delta)
+# end
+
+# function Base.:-(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Longitude{U}(lon.value - delta)
+# end
