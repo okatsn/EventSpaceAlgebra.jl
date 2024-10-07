@@ -78,10 +78,23 @@ end
     for t in ts, Δt in Δts
         @test (t + Δt) == (Δt + t)
         @test typeof(t) == typeof((t + Δt))
+        @test_throws MethodError Δt - t # Noted that subtraction is not commutative!
+        @test typeof(t) == typeof((t - Δt))
     end
+
+    @test EventTimeMS(5990) - Second(1) == EventTimeMS(4990)
+    @test EventTimeJD(5990) - Day(990) == EventTimeJD(5000)
+
 end
 
-@testset "Test Addition" begin
+@testset "Test Add/Substract" begin
+    using Dates
+    Δt = Hour(5998)
+    dt = DateTime(2024, 10, 7)
+    evt0 = EventTimeMS(dt)
+    evt1 = EventTimeJD(dt) + Δt
+    subtracted_t = (evt1 - evt0)
+    @test EventTimeJD(dt + subtracted_t) == evt1
     #     # Coordinate of different type should not be subtractable
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)

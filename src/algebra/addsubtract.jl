@@ -3,10 +3,22 @@
 # # For the temporal distance between two event.
 # TODO: "-" functions for eventTime scale with eventTime of the same unit. (output: duration)
 # TODO: "-" functions for eventTime scale with eventTime of a different unit. (output: duration)
+
+"""
+`Base.:-(t1::EventTime, t2::EventTime)`.
+Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
+"""
 function Base.:-(t1::EventTime, t2::EventTime)
     to_datetime(t1) - to_datetime(t2)
 end
 
+function Base.:-(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
+    EventTimeMS{T}(uconvert(ms_epoch, t1.value - Δt))
+end
+
+function Base.:-(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
+    EventTimeJD{T}(uconvert(jd, t1.value - Δt))
+end
 
 
 function Base.:+(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
@@ -19,6 +31,7 @@ end
 
 # Ensure the commutative property:
 Base.:+(Δt::U, t1::EventTime) where {U<:Dates.AbstractTime} = t1 + Δt
+
 
 
 # # For referenced temporal and spatial points:
