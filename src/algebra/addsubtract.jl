@@ -13,20 +13,20 @@ function Base.:-(t1::EventTime, t2::EventTime)
 end
 
 function Base.:-(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeMS{T}(uconvert(ms_epoch, t1.value - Δt))
+    EventTimeMS{T}(t1.value - Δt)
 end
 
 function Base.:-(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeJD{T}(uconvert(jd, t1.value - Δt))
+    EventTimeJD{T}(t1.value - Δt)
 end
 
 
 function Base.:+(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeMS{T}(uconvert(ms_epoch, t1.value + Δt))
+    EventTimeMS{T}(t1.value + Δt)
 end
 
 function Base.:+(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeJD{T}(uconvert(jd, t1.value + Δt))
+    EventTimeJD{T}(t1.value + Δt)
 end
 
 # Ensure the commutative property:
