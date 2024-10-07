@@ -9,20 +9,22 @@ function Base.:-(t1::EventTime, t2::EventTime)
 end
 
 function Base.:-(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeMS{T}(t1.value - Δt)
+    EventTimeMS{T}(t1.value - Quantity(Δt))
 end
 
 function Base.:-(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeJD{T}(t1.value - Δt)
+    EventTimeJD{T}(t1.value - Quantity(Δt))
 end
 
 
 function Base.:+(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeMS{T}(t1.value + Δt)
+    EventTimeMS{T}(t1.value + Quantity(Δt))
 end
 
 function Base.:+(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
-    EventTimeJD{T}(t1.value + Δt)
+    EventTimeJD{T}(t1.value + Quantity(Δt))
+    # CHECKPOINT for the failure: This failed because Quantity(Δt) is of dimension 𝐓, whereas `t1.value` is of dimension `𝐓^2`.
+    # Basically, simple `32u"°F" + 1u"°F"` failed
 end
 
 # Ensure the commutative property:

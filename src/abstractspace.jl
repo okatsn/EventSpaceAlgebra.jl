@@ -3,6 +3,7 @@ Any concrete type `::EventCoordinate` should be constructed as a `struct` with s
 """
 # TODO: this interface is used in extending fundamental method such as `isless` and `isapprox`.
 abstract type EventCoordinate end
+
 abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 
 """
@@ -227,10 +228,10 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 function EventTimeJD{T}(evt::EventTimeMS) where {T}
-    EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
+    EventTime{T,typeof(jd)}(uconvert(jd, evt.value))
 end
 
 
 function EventTimeMS{T}(evt::EventTimeJD) where {T}
-    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
+    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value))
 end
