@@ -222,7 +222,6 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
 
-const epoch_julian_diff_ms = DateTime(0000, 1, 1) - DateTime(-4713, 11, 24, 12, 00, 00)
 
 
 function EventTimeJD{T}(evt::EventTimeMS) where {T}

@@ -1,5 +1,5 @@
 function to_datetime(t::EventTimeMS)
-    epoch = DateTime(0000, 1, 1)
+    epoch = epochms0
     delta = Millisecond(uconvert(u"ms", t.value).val)
     epoch + delta
 end

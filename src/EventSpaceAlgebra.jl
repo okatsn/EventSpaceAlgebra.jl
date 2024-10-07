@@ -1,5 +1,6 @@
 module EventSpaceAlgebra
 
+using Dates
 using Unitful
 include("unitfulunits.jl")
 function __init__()
@@ -7,9 +8,9 @@ function __init__()
 end
 export ms_epoch, jd
 
-using Dates
 include("abstractspace.jl")
 export EventTime, EventTimeJD, EventTimeMS
+export EventCoordinate
 
 include("spatial.jl")
 export Longitude, Latitude

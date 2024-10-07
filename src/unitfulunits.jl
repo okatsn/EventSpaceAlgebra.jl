@@ -1,4 +1,9 @@
 # KEYNOTE: To dispatch on unit, please use e.g., typeof(ms_epoch). See `to_datetime`
+const julianday0 = Dates.julian2datetime(0)
+const epochms0 = Dates.epochms2datetime(0)
+
+const epoch_julian_diff_ms = epochms0 - julianday0
+
 
 #
 """
