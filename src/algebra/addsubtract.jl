@@ -1,9 +1,5 @@
 
 
-# # For the temporal distance between two event.
-# TODO: "-" functions for eventTime scale with eventTime of the same unit. (output: duration)
-# TODO: "-" functions for eventTime scale with eventTime of a different unit. (output: duration)
-
 """
 `Base.:-(t1::EventTime, t2::EventTime)`.
 Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
@@ -31,16 +27,6 @@ end
 
 # Ensure the commutative property:
 Base.:+(Δt::U, t1::EventTime) where {U<:Dates.AbstractTime} = t1 + Δt
-
-
-
-# # For referenced temporal and spatial points:
-# TODO: "+" and "-" functions for eventTime scale with duration. (output: DateTime)
-
-
-
-# TODO: Test output types above.
-
 
 
 # # Postponed because of there is no immediate necessity.
