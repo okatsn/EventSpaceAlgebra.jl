@@ -63,6 +63,14 @@
 
 end
 
+@testset "Commutative property" begin
+    Δts = [Hour(5), Second(19767056), Day(78999)]
+    ts = [EventTimeMS(5990), EventTimeJD(7.892), EventTimeMS(1.599), EventTimeJD(1 // 3)]
+    for t in ts, Δt in Δts
+        @test (t + Δt) == (Δt + t)
+    end
+end
+
 @testset "Test Addition" begin
     #     # Coordinate of different type should not be subtractable
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
