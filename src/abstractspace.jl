@@ -1,3 +1,7 @@
+"""
+Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`, because ...
+"""
+# TODO: this interface is used in extending fundamental method such as `isless` and `isapprox`.
 abstract type EventCoordinate end
 abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 
@@ -23,8 +27,6 @@ true
 
 true
 ```
-
-# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
 
 Conversion between `ms_epoch` and `jd`:
 
