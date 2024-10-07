@@ -1,4 +1,13 @@
 @testset "timespacetypes.jl" begin
+    @test EventTime{Float64,typeof(u"jd")}(5u"jd") === EventTime(5.0u"jd")
+    @test EventTime{Int,typeof(u"jd")}(5u"jd") === EventTime(5u"jd")
+    @test EventTime{Float64,typeof(u"jd")} === EventTimeJD{Float64}
+    @test EventTime{Int,typeof(u"jd")} === EventTimeJD{Int}
+
+    @test EventTime{Float64,typeof(u"ms_epoch")}(5u"ms_epoch") === EventTime(5.0u"ms_epoch")
+    @test EventTime{Int,typeof(u"ms_epoch")}(5u"ms_epoch") === EventTime(5u"ms_epoch")
+    @test EventTime{Float64,typeof(u"ms_epoch")} === EventTimeMS{Float64}
+    @test EventTime{Int,typeof(u"ms_epoch")} === EventTimeMS{Int}
     #     # `sameunit` returns true for any arbitrary two concrete construct of `AbstractSpace`.
     #     @test EventSpaceAlgebra.sameunit(
     #         Longitude(1, Degree), Longitude(2, Degree)
