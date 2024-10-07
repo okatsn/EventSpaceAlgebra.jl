@@ -77,6 +77,7 @@ end
     ts = [EventTimeMS(5990), EventTimeJD(7.892), EventTimeMS(1.599), EventTimeJD(1 // 3)]
     for t in ts, Δt in Δts
         @test (t + Δt) == (Δt + t)
+        @test typeof(t) == typeof((t + Δt))
     end
 end
 

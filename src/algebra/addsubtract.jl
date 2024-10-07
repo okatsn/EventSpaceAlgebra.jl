@@ -7,15 +7,14 @@ function Base.:-(t1::EventTime, t2::EventTime)
     to_datetime(t1) - to_datetime(t2)
 end
 
-get_val(t::EventTime) = t.value
-get_val(t::Dates.AbstractTime) = t
 
-function Base.:+(t1::EventTime, Δt::U) where {U<:Dates.AbstractTime}
-    EventTime(uconvert(ms_epoch, get_val(t1) + get_val(Δt)))
+
+function Base.:+(t1::EventTimeMS{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
+    EventTimeMS{T}(uconvert(ms_epoch, t1.value + Δt))
 end
 
-function Base.:+(t1::EventTime, Δt::U) where {U<:Dates.AbstractTime}
-    EventTime(uconvert(jd, get_val(t1) + get_val(Δt)))
+function Base.:+(t1::EventTimeJD{T}, Δt::U) where {T} where {U<:Dates.AbstractTime}
+    EventTimeJD{T}(uconvert(jd, t1.value + Δt))
 end
 
 # Ensure the commutative property:
