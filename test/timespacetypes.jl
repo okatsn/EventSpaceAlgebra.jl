@@ -72,6 +72,22 @@
 
 end
 
+@testset "Comparison integrity" begin
+    using Unitful
+    @test isapprox(EventTimeMS(5), EventTimeMS(5.0))
+    @test isapprox(EventTimeMS(5), EventTimeMS(5.0000000000001))
+    @test isapprox(EventTimeJD(1 // 4), EventTimeJD(0.25))
+    @test isequal(EventTimeMS(5), EventTimeMS(5.0))
+    @test isequal(EventTimeJD(1 // 4), EventTimeJD(0.25))
+    @test !isequal(EventTimeMS(5), EventTime(5u"ms")) # Arbitrary units should not be guaranteed.
+
+    # TODO: The following tests should returns true.
+    dt = DateTime(2021, 12, 21)
+    @test isequal(EventTimeMS(dt), EventTimeJD(dt))
+    @test isequal(EventTimeMS(dt), dt)
+    @test isequal(EventTimeJD(dt), dt)
+end
+
 @testset "Commutative property" begin
     Δts = [Hour(5), Second(19767056), Day(78999)]
     ts = [EventTimeMS(5990), EventTimeJD(7.892), EventTimeMS(1.599), EventTimeJD(1 // 3)]

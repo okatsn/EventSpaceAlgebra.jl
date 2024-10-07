@@ -11,3 +11,14 @@
 # end
 
 # TODO: define `isapprox` and `isless` ... for eventTime-wise, Latitude-wise and Longitude-wise comparison.
+
+# KEYNOTE: Only `T` of the same type can be compared.
+function Base.isapprox(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
+    isapprox(t1.value, t2.value)
+end
+
+function Base.isequal(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
+    isequal(t1.value, t2.value)
+end
+
+# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
