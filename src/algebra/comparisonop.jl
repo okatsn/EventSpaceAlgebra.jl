@@ -21,4 +21,21 @@ function Base.isequal(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U
     isequal(t1.value, t2.value)
 end
 
+function Base.isapprox(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
+    unit1 = Unitful.unit(t1.value)
+    isapprox(t1.value, uconvert(unit1, t2.value))
+end
+
+function Base.isequal(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
+    unit1 = Unitful.unit(t1.value)
+    isapprox(t1.value, uconvert(unit1, t2.value))
+end
+
+function Base.isequal(t1::TemporalCoordinate, t2::DateTime)
+    isequal(to_datetime(t1), t2)
+end
+
+# For commutative property.
+
+Base.isequal(t2::DateTime, t1::TemporalCoordinate) = isequal(t1, t2)
 # TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.

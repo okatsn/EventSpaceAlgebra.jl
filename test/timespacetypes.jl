@@ -84,8 +84,16 @@ end
     # TODO: The following tests should returns true.
     dt = DateTime(2021, 12, 21)
     @test isequal(EventTimeMS(dt), EventTimeJD(dt))
+    @test isequal(EventTimeJD(dt), EventTimeMS(dt))
     @test isequal(EventTimeMS(dt), dt)
     @test isequal(EventTimeJD(dt), dt)
+    @test isequal(dt, EventTimeMS(dt))
+    @test isequal(dt, EventTimeJD(dt))
+    @test isapprox(EventTimeMS(dt), EventTimeJD(dt))
+    @test isapprox(EventTimeJD(dt), EventTimeMS(dt))
+    # There is no `isapprox(::DateTime, ::DateTime)`
+    # @test isapprox(EventTimeMS(dt), dt)
+    # @test isapprox(EventTimeJD(dt), dt)
 end
 
 @testset "Commutative property" begin
