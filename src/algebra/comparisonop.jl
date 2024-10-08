@@ -32,7 +32,7 @@ end
 
 function Base.:(==)(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
     unit1 = Unitful.unit(t1.value)
-    isapprox(t1.value, uconvert(unit1, t2.value))
+    ==(t1.value, uconvert(unit1, t2.value))
 end # FIXME
 
 

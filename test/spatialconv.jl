@@ -12,4 +12,16 @@
     # although the units are different, they both indicate the same absolute time
 
     @test isequal(EventTimeJD(0), uconvert(jd, EventTime(-EventSpaceAlgebra.epoch_julian_diff_ms * u"ms_epoch")))
+
+    # Test differentiation and compares vectors of event time.
+    @test diff([EventTimeJD(i) for i in 1:10]) == [Millisecond(Day(1)) for _ in 1:9]
+
+    evtpairs = [(EventTimeJD(dt + Day(i)), EventTimeMS(dt + Day(i))) for i in 1:10]
+    @test first.(evtpairs) == last.(evtpairs)
+    @test all(first.(evtpairs) .== last.(evtpairs))
+
+    a = first.(evtpairs)
+    b = last.(evtpairs) .+ Day(1)
+    @test a != b
+    @test all(a .!= b)
 end
