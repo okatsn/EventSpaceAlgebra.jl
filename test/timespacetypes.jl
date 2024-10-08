@@ -103,7 +103,6 @@ end
 
     @test isapprox(EventTimeJD(dt) + Δt, EventTimeMS(dt) + Δt) # comparison between different unit will encounter promotion, which may result is numerical error.
 
-    f
     a = EventTimeJD(dt) - Δt
     b = EventTimeMS(dt) - Δt
     @test isapprox(a, b) # equality check will return false because of unit conversion.

@@ -30,14 +30,37 @@ true
 
 Conversion between `ms_epoch` and `jd`:
 
-```
-evt_ms = EventTimeMS(123)
-evt_jd = uconvert(u"jd", evt_ms.value)
-EventTime(evt_jd) == evt_ms
+```jldoctest
+using Dates, EventSpaceAlgebra, Unitful
+dt = DateTime(2024, 10, 7);
+evt_ms = EventTimeMS(dt)
+evt_jd = uconvert(u"jd", evt_ms)
+evt_jd == evt_ms
 
 # output
 
-true # FIXME: not a jldoctest yet.
+true
+```
+
+
+Please be aware of possible conversion error:
+
+```@repl a123
+using Dates, EventSpaceAlgebra, Unitful
+Δt = Hour(5998);
+dt = DateTime(2024, 10, 7);
+uconvert(u"jd", EventTimeMS(dt + Δt)) == EventTimeJD(dt + Δt) # true
+uconvert(u"ms_epoch", EventTimeJD(dt + Δt)) == EventTimeMS(dt + Δt) # false
+```
+These error are originated from promotion (see `Unitful`'s quantities.jl, for example):
+
+```@repl a123
+a = EventTimeJD(dt + Δt);
+b = EventTimeMS(dt + Δt);
+(ap, bp) = promote(a.value, b.value);
+ap - bp
+a == b
+isapprox(a, b)
 ```
 
 """
