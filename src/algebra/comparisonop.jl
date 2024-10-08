@@ -12,7 +12,8 @@
 
 # TODO: define `isapprox` and `isless` ... for eventTime-wise, Latitude-wise and Longitude-wise comparison.
 
-# KEYNOTE: Only `T` of the same type can be compared.
+
+# # Comparison between the same unit type
 function Base.isapprox(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
     isapprox(t1.value, t2.value)
 end
@@ -21,6 +22,8 @@ function Base.isequal(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U
     isequal(t1.value, t2.value)
 end
 
+
+# # Comparison between two different unit types
 function Base.isapprox(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
     unit1 = Unitful.unit(t1.value)
     isapprox(t1.value, uconvert(unit1, t2.value))
@@ -31,6 +34,8 @@ function Base.isequal(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{
     isapprox(t1.value, uconvert(unit1, t2.value))
 end # FIXME
 
+
+# # Comparing to `DateTime`
 function Base.isequal(t1::TemporalCoordinate, t2::DateTime)
     isequal(to_datetime(t1), t2)
 end

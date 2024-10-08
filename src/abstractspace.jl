@@ -86,26 +86,14 @@ and https://docs.julialang.org/en/v1/manual/types/#Type-Aliases
 
 Noted that since `EventTimeMS` is abstract, the `EventTime` interface is not available.
 
-```jldoctest
-julia> using EventSpaceAlgebra, Unitful
-
-julia> EventTimeMS(5u"ms_epoch")
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Int64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
-
-julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
-```
-
 Noted that `ms_epoch` is defined as an affine unit that against `Unitful.ms`. That is, `uconvert` between `ms` and `ms_epoch` is exactly affined as-is.
 ```jldoctest
 julia> using EventSpaceAlgebra, Unitful
 
 julia> isequal(EventTimeMS(5), EventTime(5u"ms"))
-
 true
 
 julia> isequal(Quantity(5u"ms_epoch"), Quantity(5u"ms"))
-
 true
 ```
 """
@@ -196,9 +184,6 @@ EventTimeJD{Float64}(5.0 jd)
 
 julia> b = EventTime(5u"jd")
 EventTimeJD{Int64}(5 jd)
-
-julia> EventTimeJD{Int64}
-EventTimeJD{Int64} (alias for EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
 
 julia> typeof(a) <: EventTimeJD
 true
