@@ -1,5 +1,6 @@
 ## KEYNOTE (Old): You don't need to define `isequal` when ValueUnit is immutable.
-# - `==` and thus `isequal` depend on `hash`
+# - By default, `isequal` calls `==`. So I only need to define custom `==`.
+# - (By default) `==` and thus `isequal` depend on `hash`
 # - `DataFrames.groupby` also depends on `hash`
 # - `mutable struct`s are hashed by reference, thus `ValueUnit(1, Degree) == ValueUnit(1, Degree)` returns `false` for `mutable struct ValueUnit ...end`.
 # - `groupby` also group different constructs of the same `mutable struct`s into different groups, even they hold exactly the same contents.
