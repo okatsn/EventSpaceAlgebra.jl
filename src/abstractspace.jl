@@ -221,14 +221,3 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
-
-
-
-function EventTimeJD{T}(evt::EventTimeMS) where {T}
-    EventTime{T,typeof(jd)}(uconvert(jd, evt.value))
-end
-
-
-function EventTimeMS{T}(evt::EventTimeJD) where {T}
-    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value))
-end

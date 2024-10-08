@@ -12,6 +12,6 @@
     evt2a = EventTimeJD(d_epoch)
     @test to_datetime(evt1) == to_datetime(evt1a) == dt
     @test to_datetime(evt2) == to_datetime(evt2a) == dt
-    @test EventTimeJD{Float64}(evt1a) == evt2a
-    @test EventTimeMS{Int}(evt2a) == evt1a
+    @test uconvert(u"jd", evt1a) == evt2a
+    @test uconvert(u"ms_epoch", evt2a) == evt1a
 end
