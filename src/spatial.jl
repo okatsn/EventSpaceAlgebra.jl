@@ -36,7 +36,7 @@ julia> $fnname(0.5*π*u"rad").value.val # Radian will be converted to degree.
 90.0
 
 julia> $fnname(0.5*π*u"rad").value |> typeof
-Quantity{Float64, NoDims, $(typeof(u"°"))}
+Unitful.Quantity{Float64, NoDims, $(typeof(u"°"))}
 
 julia> 0.5*π*u"m/m" == 0.5*π*u"rad"
 true
