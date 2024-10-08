@@ -11,7 +11,7 @@ const epoch_julian_diff_d = floor(Millisecond(epoch_julian_diff_ms), Day).value 
 The time unit in unit `Unitful.ms` for `EventSpaceAlgebra.ms_epoch`'s reference.
 
 ```jldoctest
-julia> using EventSpaceAlgebra, Unitful
+julia> using EventSpaceAlgebra
 
 julia> 0u"ms" == 0u"ms_epoch"
 true
@@ -27,7 +27,7 @@ The time unit in unit `Unitful.d` for `EventSpaceAlgebra.jd`'s reference.
 This makes the `0u"d"` mutually the same as `0u"jd"`.
 
 ```jldoctest
-julia> using EventSpaceAlgebra, Unitful
+julia> using EventSpaceAlgebra
 
 julia> uconvert(u"jd", 0u"d").val == EventSpaceAlgebra.epoch_julian_diff_d # which is about 1.7210595e6 jd
 true

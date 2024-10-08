@@ -18,7 +18,7 @@ Use with `Unitful` to define `EventTime` of arbitrary units:
 
 ```jldoctest
 
-using EventSpaceAlgebra, Unitful
+using EventSpaceAlgebra
 EventTime(5u"ms_epoch")
 
 true
@@ -31,7 +31,7 @@ true
 Conversion between `ms_epoch` and `jd`:
 
 ```jldoctest
-using Dates, EventSpaceAlgebra, Unitful
+using Dates, EventSpaceAlgebra
 dt = DateTime(2024, 10, 7);
 evt_ms = EventTimeMS(dt)
 evt_jd = uconvert(u"jd", evt_ms)
@@ -46,7 +46,7 @@ true
 Please be aware of possible conversion error:
 
 ```@repl a123
-using Dates, EventSpaceAlgebra, Unitful
+using Dates, EventSpaceAlgebra
 Δt = Hour(5998);
 dt = DateTime(2024, 10, 7);
 uconvert(u"jd", EventTimeMS(dt + Δt)) == EventTimeJD(dt + Δt) # true
@@ -65,7 +65,7 @@ isapprox(a, b)
 
 By the way, you can compare `EventTime` directly with `DateTime`, the mechanism is convert `EventTime` using `to_datetime`, and then makes comparison
 ```jldoctest
-using Dates, EventSpaceAlgebra, Unitful
+using Dates, EventSpaceAlgebra
 DateTime(0000, 1, 1) == EventTimeMS(0)
 
 # output
@@ -137,7 +137,7 @@ EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 # Example
 
 ```jldoctest testmsep
-using EventSpaceAlgebra, Unitful
+using EventSpaceAlgebra
 EventTime(5, ms_epoch) == EventTimeMS(5)
 
 # output
@@ -207,7 +207,7 @@ false
 ```
 
 ```jldoctest testjd
-julia> using EventSpaceAlgebra, Unitful
+julia> using EventSpaceAlgebra
 ```
 
 ```jldoctest testjd

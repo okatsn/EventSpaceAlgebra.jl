@@ -6,6 +6,7 @@ include("unitfulunits.jl")
 function __init__()
     Unitful.register(@__MODULE__)
 end
+export @u_str
 export ms_epoch, jd
 
 include("abstractspace.jl")
@@ -17,6 +18,7 @@ export Longitude, Latitude
 export Depth
 
 include("uconvert.jl")
+export uconvert
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")

@@ -18,7 +18,7 @@ end
 It is not mutable because when converting to it other units such as `m/m` or `rad`, it loses its nature and become a quantity of other meaning.
 
 ```jldoctest
-julia> using Unitful, EventSpaceAlgebra
+julia> using EventSpaceAlgebra
 
 julia> typeof(1u"°") <: EventSpaceAlgebra.EventAngleDegree
 true
@@ -30,7 +30,7 @@ You can define `$fnname` with `u"rad"`, but it will be converted to the unit of 
 It should be noted that input with any other dimensionless quantities is intended to trigger an error, for example such as `u"m/m"`, because we cannot guarantee whether a dimensionless unit like `u"m/m"` is derived to be the quantity of radian, or something else.
 
 ```jldoctest
-julia> using Unitful, EventSpaceAlgebra
+julia> using EventSpaceAlgebra
 
 julia> $fnname(0.5*π*u"rad").value.val # Radian will be converted to degree.
 90.0
@@ -123,7 +123,7 @@ end
 
 """
 ```jldoctest
-julia> using EventSpaceAlgebra, Unitful
+julia> using EventSpaceAlgebra
 
 julia> Depth(5)
 Depth{Int64, Unitful.FreeUnits{(km,), 𝐋, nothing}}(5 km)

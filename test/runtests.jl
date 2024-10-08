@@ -1,6 +1,6 @@
 using Test
 # using TestItems
-using EventSpaceAlgebra, Unitful
+using EventSpaceAlgebra
 
 function targetlist(targetexpr::Regex, dir2walk::AbstractString)
     # targetexpr = r"(\.jl)$";
