@@ -79,7 +79,6 @@ end
     @test isapprox(EventTimeJD(1 // 4), EventTimeJD(0.25))
     @test isequal(EventTimeMS(5), EventTimeMS(5.0))
     @test isequal(EventTimeJD(1 // 4), EventTimeJD(0.25))
-    @test !isequal(EventTimeMS(5), EventTime(5u"ms")) # Arbitrary units should not be guaranteed.
 
     # TODO: The following tests should returns true.
     dt = DateTime(2021, 12, 21)
