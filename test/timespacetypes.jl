@@ -19,24 +19,11 @@
     #         Longitude(1, Degree), Distance(2.3, Degree)
     #     )
     #     @test EventSpaceAlgebra.sameunit(
-    #         EventTime(1, JulianDay), Distance(2.3, JulianDay)
-    #     )
-    #     @test EventSpaceAlgebra.sameunit(
     #         Distance(1, Degree), Coordinate(Latitude, 1, Degree)
     #     )
-    #     @test_throws EventSpaceAlgebra.UnitMismatch EventSpaceAlgebra.sameunit(
-    #         Distance(1, Degree), EventTime(1, JulianDay)
-    #     )
-    #     @test_throws EventSpaceAlgebra.UnitMismatch EventSpaceAlgebra.sameunit(
-    #         Distance(1, Degree), Distance(1, JulianDay)
-    #     )
+
     #     # Test `Distance` constructor
     #     @test Distance(2.3, Degree) == AngularDistance(ValueUnit(2.3, Degree))
-
-    #     # Test `sameunit` error
-    #     @test_throws EventSpaceAlgebra.UnitMismatch EventSpaceAlgebra.sameunit(
-    #         Coordinate(EventTime, 1, JulianDay), Coordinate(Latitude, 2, Degree)
-    #     )
 
     #     # Test `isless`
     #     @test isless(
@@ -62,13 +49,6 @@
     #     @test isapprox(
     #         Coordinate(EventTime, 121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
     #     )
-    #     @test isapprox(
-    #         Distance(121.33, JulianDay) - Distance(110.0, JulianDay), Distance(11.33, JulianDay)
-    #     )
-
-    #     # test set_value
-    #     lg122 = Longitude(122, Degree)
-    #     @test isequal(set_value(lg122, 123), Longitude(123, Degree))
 
 end
 
@@ -79,7 +59,6 @@ end
     @test isapprox(EventTimeJD(1 // 4), EventTimeJD(0.25))
     @test isequal(EventTimeMS(5), EventTimeMS(5.0))
     @test isequal(EventTimeJD(1 // 4), EventTimeJD(0.25))
-    @test !isequal(EventTimeMS(5), EventTime(5u"ms")) # Arbitrary units should not be guaranteed.
 
     # TODO: The following tests should returns true.
     dt = DateTime(2021, 12, 21)
@@ -94,6 +73,7 @@ end
     # There is no `isapprox(::DateTime, ::DateTime)`
     # @test isapprox(EventTimeMS(dt), dt)
     # @test isapprox(EventTimeJD(dt), dt)
+    @test isapprox(EventTime(121.33u"jd") - 110.1u"d", EventTime(11.32u"jd"))
 end
 
 @testset "Commutative property" begin
@@ -108,6 +88,7 @@ end
 
     @test EventTimeMS(5990) - Second(1) == EventTimeMS(4990)
     @test EventTimeJD(5990) - Day(990) == EventTimeJD(5000)
+    @test Day(990) + EventTimeJD(5000.5) == EventTimeJD(5990.5)
 
 end
 
@@ -119,6 +100,16 @@ end
     evt1 = EventTimeJD(dt) + Δt
     subtracted_t = (evt1 - evt0)
     @test EventTimeJD(dt + subtracted_t) == evt1
+    @test EventTimeJD(dt) + Δt == EventTimeMS(dt) + Δt
+    @test EventTimeJD(dt) - Δt == EventTimeMS(dt) - Δt
+
+    @test_throws InexactError EventTimeMS(5) + 5.9u"ms"
+    @test_throws InexactError EventTimeJD(5) + 43200u"s"
+    @test_throws InexactError EventTimeMS(5) - 5.9u"ms"
+    @test_throws InexactError EventTimeJD(5) - 43200u"s"
+    @test EventTimeJD(5) + 86400u"s" == EventTimeJD(6)
+    @test EventTimeJD(5) - 86400u"s" == EventTimeJD(4)
+
     #     # Coordinate of different type should not be subtractable
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)

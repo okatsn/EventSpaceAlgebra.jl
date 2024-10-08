@@ -1,8 +1,8 @@
 """
-Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`, because ...
+Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`; it is the conventional interface across this package.
 """
-# TODO: this interface is used in extending fundamental method such as `isless` and `isapprox`.
 abstract type EventCoordinate end
+
 abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 
 """
@@ -85,16 +85,16 @@ and https://docs.julialang.org/en/v1/manual/types/#Type-Aliases
 
 Noted that since `EventTimeMS` is abstract, the `EventTime` interface is not available.
 
+Noted that `ms_epoch` is defined as an affine unit that against `Unitful.ms`. That is, `uconvert` between `ms` and `ms_epoch` is exactly affined as-is.
 ```jldoctest
 julia> using EventSpaceAlgebra, Unitful
 
-julia> EventTimeMS(5u"ms_epoch")
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Int64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+julia> isequal(EventTimeMS(5), EventTime(5u"ms"))
+true
 
-julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+julia> isequal(Quantity(5u"ms_epoch"), Quantity(5u"ms"))
+true
 ```
-
 """
 EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 
@@ -184,9 +184,6 @@ EventTimeJD{Float64}(5.0 jd)
 julia> b = EventTime(5u"jd")
 EventTimeJD{Int64}(5 jd)
 
-julia> EventTimeJD{Int64}
-EventTimeJD{Int64} (alias for EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
-
 julia> typeof(a) <: EventTimeJD
 true
 
@@ -223,14 +220,3 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
-
-
-
-function EventTimeJD{T}(evt::EventTimeMS) where {T}
-    EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
-end
-
-
-function EventTimeMS{T}(evt::EventTimeJD) where {T}
-    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
-end
