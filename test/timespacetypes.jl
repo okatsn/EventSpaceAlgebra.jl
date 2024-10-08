@@ -52,8 +52,22 @@
 
 end
 
+@testset "spatial parametric types" begin
+    # float v.s. int
+    @test Longitude(0.5π * u"rad") == Longitude(90 * u"°")
+    @test Longitude(1π * u"rad") == Longitude(180 * u"°")
+    # Longitude and Latitude shouldn't be equal.
+    a = 0.5π * u"rad"
+    @test Latitude(a) != Longitude(a)
+
+    # You cannot compare Latitude with Longitude.
+    @test_throws MethodError Latitude(a) < Longitude(a)
+    @test_throws MethodError Latitude(a) > Longitude(a)
+    @test_throws MethodError Latitude(a) <= Longitude(a)
+    @test_throws MethodError Latitude(a) >= Longitude(a)
+end
+
 @testset "Comparison integrity" begin
-    using Unitful
     @test isapprox(EventTimeMS(5), EventTimeMS(5.0))
     @test isapprox(EventTimeMS(5), EventTimeMS(5.0000000000001))
     @test isapprox(EventTimeJD(1 // 4), EventTimeJD(0.25))

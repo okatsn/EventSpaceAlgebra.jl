@@ -12,9 +12,11 @@
 # end
 
 # TODO: define `isapprox` and `isless` ... for eventTime-wise, Latitude-wise and Longitude-wise comparison.
+# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
 
 
-# # Comparison between the same unit type
+# # Temporal units
+# Comparison between the same unit type
 # KEYNOTE: For meta programming, please refer quantities.jl of Unitful.
 # - also see https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/3?u=okatsn
 for op in (:(==), :isapprox)
@@ -24,7 +26,8 @@ for op in (:(==), :isapprox)
 end
 
 
-# # Comparison between two different unit types
+# Comparison between two different unit types
+# - (This is superfluous, as it calls `$op` in the same way as above)
 for op in (:(==), :isapprox)
     @eval function Base.$op(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
         $op(t1.value, t2.value)
@@ -41,4 +44,11 @@ end
 # For commutative property.
 
 Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = ==(t1, t2)
-# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
+
+
+# # Spatial Units
+for op in (:(==), :isapprox), AC in (:Latitude, :Longitude, :Depth)
+    @eval function Base.$op(t1::$AC, t2::$AC)
+        $op(t1.value, t2.value)
+    end
+end

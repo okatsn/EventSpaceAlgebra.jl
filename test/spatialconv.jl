@@ -1,6 +1,21 @@
 @testset "spatialconv.jl" begin
     using Unitful, Dates
+    # Spatial
     @test uconvert(u"m", Depth(5.0)) == Depth(5000.0u"m")
+    @test Depth(5u"km") == Depth(5000u"m")
+    @test Depth(5u"km") == Depth(5000u"m")
+
+    # Comparison between conventional length should result in inequalness.
+    @test Depth(5u"km") != 5000u"m"
+    @test Depth(5u"km") != 5u"km"
+
+    @test isapprox(Depth((1 // 3) * u"m"), Depth(0.333333333333u"m"))
+    @test !isequal(Depth((1 // 3) * u"m"), Depth(0.333333333333u"m"))
+
+    @test isapprox(Longitude(3.14159265359u"rad"), Longitude(180u"°"))
+    @test isapprox(Latitude(3.14159265359u"rad"), Latitude(180u"°"))
+
+    # Temporal
     @test EventSpaceAlgebra.epochms0 == DateTime(0000, 1, 1)
     @test EventTimeMS(0.0) == uconvert(ms_epoch, EventTimeJD(EventSpaceAlgebra.epochms0))
 
