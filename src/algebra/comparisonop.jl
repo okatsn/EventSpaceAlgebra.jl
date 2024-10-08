@@ -26,13 +26,11 @@ end
 
 # # Comparison between two different unit types
 function Base.isapprox(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
-    unit1 = Unitful.unit(t1.value)
-    isapprox(t1.value, uconvert(unit1, t2.value))
+    isapprox(t1.value, t2.value) # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
 end
 
 function Base.:(==)(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
-    unit1 = Unitful.unit(t1.value)
-    ==(t1.value, uconvert(unit1, t2.value))
+    ==(t1.value, t2.value)
 end # FIXME
 
 

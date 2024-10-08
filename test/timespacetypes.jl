@@ -100,8 +100,14 @@ end
     evt1 = EventTimeJD(dt) + Δt
     subtracted_t = (evt1 - evt0)
     @test EventTimeJD(dt + subtracted_t) == evt1
-    @test EventTimeJD(dt) + Δt == EventTimeMS(dt) + Δt
-    @test EventTimeJD(dt) - Δt == EventTimeMS(dt) - Δt
+
+    @test isapprox(EventTimeJD(dt) + Δt, EventTimeMS(dt) + Δt) # comparison between different unit will encounter promotion, which may result is numerical error.
+
+    f
+    a = EventTimeJD(dt) - Δt
+    b = EventTimeMS(dt) - Δt
+    @test isapprox(a, b) # equality check will return false because of unit conversion.
+    @test EventTimeJD(dt) == EventTimeMS(dt)
 
     @test_throws InexactError EventTimeMS(5) + 5.9u"ms"
     @test_throws InexactError EventTimeJD(5) + 43200u"s"
