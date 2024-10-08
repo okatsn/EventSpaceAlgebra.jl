@@ -15,23 +15,22 @@
 
 
 # # Comparison between the same unit type
-function Base.isapprox(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
-    isapprox(t1.value, t2.value)
-end
-
-function Base.:(==)(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
-    ==(t1.value, t2.value)
+# KEYNOTE: For meta programming, please refer quantities.jl of Unitful.
+# - also see https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/3?u=okatsn
+for op in (:(==), :isapprox)
+    @eval function Base.$op(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
+        $op(t1.value, t2.value)
+    end
 end
 
 
 # # Comparison between two different unit types
-function Base.isapprox(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
-    isapprox(t1.value, t2.value) # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
+for op in (:(==), :isapprox)
+    @eval function Base.$op(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
+        $op(t1.value, t2.value)
+    end
+    # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
 end
-
-function Base.:(==)(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
-    ==(t1.value, t2.value)
-end # FIXME
 
 
 # # Comparing to `DateTime`
@@ -41,5 +40,5 @@ end
 
 # For commutative property.
 
-Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = isequal(t1, t2)
+Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = ==(t1, t2)
 # TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
