@@ -63,6 +63,16 @@ a == b
 isapprox(a, b)
 ```
 
+By the way, you can compare `EventTime` directly with `DateTime`, the mechanism is convert `EventTime` using `to_datetime`, and then makes comparison
+```jldoctest
+using Dates, EventSpaceAlgebra, Unitful
+DateTime(0000, 1, 1) == EventTimeMS(0)
+
+# output
+
+true
+```
+
 """
 struct EventTime{T,U} <: TemporalCoordinate{T,U}
     value::Quantity{T,Unitful.𝐓,U}

@@ -60,10 +60,11 @@ end
     @test isequal(EventTimeMS(5), EventTimeMS(5.0))
     @test isequal(EventTimeJD(1 // 4), EventTimeJD(0.25))
 
-    # TODO: The following tests should returns true.
+    # # The following tests should returns true.
     dt = DateTime(2021, 12, 21)
     @test isequal(EventTimeMS(dt), EventTimeJD(dt))
     @test isequal(EventTimeJD(dt), EventTimeMS(dt))
+    # You can compare EventTime directly with DateTime.
     @test isequal(EventTimeMS(dt), dt)
     @test isequal(EventTimeJD(dt), dt)
     @test isequal(dt, EventTimeMS(dt))
