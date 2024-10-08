@@ -1,7 +1,6 @@
 """
-Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`, because ...
+Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`; it is the conventional interface across this package.
 """
-# TODO: this interface is used in extending fundamental method such as `isless` and `isapprox`.
 abstract type EventCoordinate end
 
 abstract type TemporalCoordinate{T,U} <: EventCoordinate end
