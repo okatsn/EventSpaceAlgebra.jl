@@ -1,3 +1,21 @@
+@testset "Basic comparison" begin
+    @test (Longitude(3.14u"rad") < Longitude(180u"°"))
+    @test !(Longitude(3.14u"rad") > Longitude(180u"°"))
+    @test (Longitude(π * u"rad") <= Longitude(180u"°"))
+    @test (Longitude(π * u"rad") >= Longitude(180u"°"))
+
+    @test Depth(500.01u"km") < Depth(5001u"km")
+    @test Depth(5000.1u"km") > Depth(5000u"km")
+    @test Depth(500.0u"km") <= Depth(500u"km")
+    @test Depth(500.0u"km") >= Depth(500u"km")
+
+    @test EventTime(500.01u"jd") < EventTime(5001u"jd")
+    @test EventTime(5000.1u"jd") > EventTime(5000u"jd")
+    @test EventTime(500.0u"jd") <= EventTime(500u"jd")
+    @test EventTime(500.0u"jd") >= EventTime(500u"jd")
+end
+
+
 @testset "Prohibit comparisons over different coordinates." begin
     # Longitude and Latitude shouldn't be equal.
     a = 0.5π * u"rad"

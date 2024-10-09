@@ -19,21 +19,23 @@
 # Comparison between the same unit type
 # KEYNOTE: For meta programming, please refer quantities.jl of Unitful.
 # - also see https://discourse.julialang.org/t/how-to-compare-two-vectors-whose-elements-are-equal-but-their-types-are-not-the-same/94309/3?u=okatsn
-for op in (:(==), :isapprox)
-    @eval function Base.$op(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
-        $op(t1.value, t2.value)
-    end
-end
 
-
-# Comparison between two different unit types
-# - (This is superfluous, as it calls `$op` in the same way as above)
-for op in (:(==), :isapprox)
-    @eval function Base.$op(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
-        $op(t1.value, t2.value)
-    end
-    # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
-end
+# # KEYNOTE: This section is disabled after methods are generated via the following "Spatial and Temporal coordinate comparison operation"
+# for op in (:(==), :isapprox)
+#     @eval function Base.$op(t1::EventTime{<:Real,U}, t2::EventTime{<:Real,U}) where {U}
+#         $op(t1.value, t2.value)
+#     end
+# end
+#
+#
+# # Comparison between two different unit types
+# # - (This is superfluous, as it calls `$op` in the same way as above)
+# for op in (:(==), :isapprox)
+#     @eval function Base.$op(t1::TemporalCoordinate{<:Real,U1}, t2::TemporalCoordinate{<:Real,U2}) where {U1,U2}
+#         $op(t1.value, t2.value)
+#     end
+#     # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
+# end
 
 
 # # Comparing to `DateTime`
@@ -46,8 +48,8 @@ end
 Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = ==(t1, t2)
 
 
-# # Spatial Units
-for op in (:(==), :isapprox), AC in (:Latitude, :Longitude, :Depth)
+# # Spatial and Temporal coordinate comparison operation
+for op in (:(==), :isapprox, :isless), AC in (:Latitude, :Longitude, :Depth, :EventTime)
     @eval function Base.$op(t1::$AC, t2::$AC)
         $op(t1.value, t2.value)
     end
