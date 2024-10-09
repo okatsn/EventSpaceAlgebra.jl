@@ -1,6 +1,6 @@
 @testset "Commutative property" begin
     using Dates
-    Δts = [Hour(5), Second(19767056), Day(78999)]
+    Δts = [Hour(5), Second(19767056), Day(78999), 5.2u"hr", 3u"s", 9887u"d"]
     ts = [EventTimeMS(5990), EventTimeJD(7.892), EventTimeMS(1.599), EventTimeJD(1 // 3)]
     for t in ts, Δt in Δts
         @test (t + Δt) == (Δt + t)
@@ -48,11 +48,18 @@ end
     @test_throws MethodError Longitude(5u"°") - Latitude(1u"°")
     @test_throws MethodError Latitude(5u"°") - Longitude(1u"°")
 
-
+    # Coordinate of different type should not be subtractable
     @test Depth(5u"m") - Depth(1u"m") == 4u"m"
     @test Depth(5.0u"m") - Depth(1u"m") == 4.0u"m"
     @test_throws MethodError Depth(5u"m") + Depth(1u"m")
-    # Coordinate of different type should not be subtractable
+
+    # `+` and `-` methods on spatial coordinates with quantity.
+    @test Depth(5u"km") + 50u"m" == Depth(5050u"m")
+    @test Depth(5u"km") - 50u"m" == Depth(4950u"m")
+    @test Longitude(20u"°") + 10u"°" == Longitude(30u"°")
+    @test Latitude(20u"°") + 10u"°" == Latitude(30u"°")
+    @test Longitude(20u"°") - 10u"°" == Longitude(10u"°")
+    @test Latitude(20u"°") - 10u"°" == Latitude(10u"°")
 
 
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
