@@ -23,7 +23,9 @@ end
 
 # Ensure the commutative property:
 Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
-
+function Base.:+(t1::Quantity, t2::EventTime{T,U}) where {T} where {U}
+    EventTime{T,U}(t2.value + t1)
+end
 
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.
