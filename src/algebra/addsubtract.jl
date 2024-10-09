@@ -31,33 +31,22 @@ end
 # # Spatial Coordinate
 # Must convert to degree before operation, because something like `2 * π * u"rad" + 1u"°"` returns Float64.
 
-for AC in (:Latitude, :Longitude, :Depth)
+for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
     @eval begin
-        function Base.:+(t1::$AC, t2)
-            $AC(+(t1.value, t2))
+        function Base.$op(t1::$AC, t2)
+            $AC($op(t1.value, t2))
         end
-        function Base.:+(t1, t2::$AC)
-            +(t2, t1)
-        end
-        if $AC == :Depth
-        else
-            function Base.:+(t1::$AC, t2::EventAngleRadian)
-                +(t1, uconvert(u"°", t2))
+        # only `+` is commutative.
+        if $op == :+
+            function Base.$op(t1, t2::$AC)
+                $op(t2, t1)
             end
         end
-    end
-end
-
-
-for AC in (:Latitude, :Longitude, :Depth)
-    @eval begin
-        function Base.:-(t1::$AC, t2)
-            $AC(-(t1.value, t2))
-        end
-        if $AC == :Depth
+        # only `Longitude/Latitude` needs unit conversion if t2 is of unit radian.
+        if $AC in (:Longitude, :Latitude)
         else
-            function Base.:-(t1::$AC, t2::EventAngleRadian)
-                -(t1, uconvert(u"°", t2))
+            function Base.$op(t1::$AC, t2::EventAngleRadian)
+                $op(t1, uconvert(u"°", t2))
             end
         end
     end
