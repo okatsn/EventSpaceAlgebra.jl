@@ -4,9 +4,7 @@
 `Base.:-(t1::EventTime, t2::EventTime)`.
 Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
 """
-function Base.:-(t1::EventTime, t2::EventTime)
-    to_datetime(t1) - to_datetime(t2)
-end
+# TODO: Rename "comparisonop.jl" as it includes EventTime-wise subtraction.
 
 function Base.:-(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
     EventTime{T,U}(t1.value - t2)
@@ -26,12 +24,38 @@ end
 
 # Ensure the commutative property:
 Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
+function Base.:+(t1::Quantity, t2::EventTime{T,U}) where {T} where {U}
+    EventTime{T,U}(t2.value + t1)
+end
+
+# # Spatial Coordinate
+# Must convert to degree before operation, because something like `2 * π * u"rad" + 1u"°"` returns Float64.
+
+for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
+    @eval begin
+        function Base.$op(t1::$AC, t2)
+            $AC($op(t1.value, t2))
+        end
+        # only `+` is commutative.
+        if $op == :+
+            function Base.$op(t1, t2::$AC)
+                $op(t2, t1)
+            end
+        end
+        # only `Longitude/Latitude` needs unit conversion if t2 is of unit radian.
+        if $AC in (:Longitude, :Latitude)
+        else
+            function Base.$op(t1::$AC, t2::EventAngleRadian)
+                $op(t1, uconvert(u"°", t2))
+            end
+        end
+    end
+end
 
 
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.
 # - "+" functions for Longitude (Latitude) with Angle units.
-# - "-" functions for Longitude (Latitude) with Longitude (Latitude) of the same unit. (output: Quantity of unit Angle)
 # - "-" functions for Longitude (Latitude) with Longitude (Latitude) of a different unit. (output: Quantity of unit Angle)
 # - "-" functions for Longitude (Latitude) with Angle units. (output: Longitude and Latitude)
 
