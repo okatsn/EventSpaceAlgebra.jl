@@ -39,6 +39,9 @@
 
 
 # # Comparing to `DateTime`
+# Here I explicitly define all possible combinations, in order to strictly limit the t1, t2 to be additionally processed
+# on only these specific events. I cannot find any other efficient way (that not use if...else) to dispatch the events
+# where only "either" of the input is DateTime (where the other must not), without colliding to existing methods.
 for op in (:(==), :isless)
     @eval function Base.$op(t1::TemporalCoordinate, t2::DateTime)
         $op(to_datetime(t1), t2)
