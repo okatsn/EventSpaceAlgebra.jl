@@ -1,3 +1,4 @@
+# # (This script is NOT included and remains as a space of pure comments.)
 ## KEYNOTE (Old): You don't need to define `isequal` when ValueUnit is immutable.
 # - By default, `isequal` calls `==`. So I only need to define custom `==`.
 # - (By default) `==` and thus `isequal` depend on `hash`
@@ -36,44 +37,3 @@
 #     end
 #     # you don't need to do `unit1 = Unitful.unit(t1.value)` and then `isapprox(t1.value, uconvert(unit1, t2.value))`, because `Unitful` do promotion before comparison. See, isequal(x::Unitful.AbstractQuantity, y::Unitful.AbstractQuantity) for example.
 # end
-
-
-# # Comparing to `DateTime`
-# Here I explicitly define all possible combinations, in order to strictly limit the t1, t2 to be additionally processed
-# on only these specific events. I cannot find any other efficient way (that not use if...else) to dispatch the events
-# where only "either" of the input is DateTime (where the other must not), without colliding to existing methods.
-for op in (:(==), :isless)
-    @eval function Base.$op(t1::TemporalCoordinate, t2::DateTime)
-        $op(to_datetime(t1), t2)
-    end
-
-    @eval function Base.$op(t1::DateTime, t2::TemporalCoordinate)
-        $op(t1, to_datetime(t2))
-    end
-end
-
-
-# # Spatial and Temporal coordinate comparison operation
-for op in (:(==), :isapprox, :isless, :-), AC in (:Latitude, :Longitude, :Depth, :EventTime)
-    @eval function Base.$op(t1::$AC, t2::$AC)
-        $op(t1.value, t2.value)
-    end
-end
-
-
-struct CoordinateMismatch <: Exception
-    msg::String
-end
-CoordinateMismatch() = CoordinateMismatch("You should not compare different coordinate")
-Base.showerror(io::IO, e::CoordinateMismatch) = print(io, e.msg)
-# To use:
-# throw(CoordinateMismatch("You should not compare different coordinate"))
-# or
-# throw(CoordinateMismatch())
-
-
-for op in (:(==), :isapprox)
-    @eval function Base.$op(t1::A, t2::B) where {A<:EventCoordinate} where {B<:EventCoordinate}
-        throw(CoordinateMismatch())
-    end
-end

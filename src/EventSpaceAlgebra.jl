@@ -22,7 +22,8 @@ export uconvert
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
-include("algebra/comparisonop.jl")
+include("algebra/commutativeop.jl")
+include("algebra/noncommutative.jl")
 include("algebra/addsubtract.jl")
 
 # export Longitude, Latitude, EventTime, JulianDay
