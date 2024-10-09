@@ -10,8 +10,11 @@
     end
 
     @test EventTimeMS(5990) - Second(1) == EventTimeMS(4990)
+    @test EventTimeMS(5990) - 1u"s" == EventTimeMS(4990)
     @test EventTimeJD(5990) - Day(990) == EventTimeJD(5000)
+    @test EventTimeJD(5990) - 990u"d" == EventTimeJD(5000)
     @test Day(990) + EventTimeJD(5000.5) == EventTimeJD(5990.5)
+    @test 990u"d" + EventTimeJD(5000.5) == EventTimeJD(5990.5)
 
 end
 
