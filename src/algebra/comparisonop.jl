@@ -40,20 +40,21 @@
 
 struct EitherDateTime end
 struct NeitherDateTime end
-struct BothDateTime end
+struct BothDateTime end # This is required because op(::DateTime, ::DateTime) dispatches to `op(t1::TemporalUnion, t2::TemporalUnion)`.
 TemporalUnion = Union{DateTime,TemporalCoordinate}
 
 # # Comparing TemporalUnion struct.
-
-op(::EitherDateTime, t1, t2) = op(to_datetime(t1), to_datetime(t2)) # comparison between two Dates.DateTime
+# `isa(T1, Type{T2}) = true` if and only if `T1 === T2`
+# for example, `typeof(T::EventTimeMS{Float64}) isa T2` be true only if `T2` is exactly `EventTimeMS{Float64}`; otherwise, like `EventTimeMS{Int64}`, returns false.
+op(::EitherDateTime, t1, t2) = op(to_datetime(t1), to_datetime(t2)) # comparison between two Dates.DateTime # KEYNOTE: Causes StackOverflow as it goes to op(t1::TemporalUnion, t2::TemporalUnion) again
 op(::NeitherDateTime, t1, t2) = op(t1.value, t2.value) # comparison between two Unitful.Quantity
-op(::BothDateTime, t1, t2) = op(t1, t2) # comparison between two Unitful.Quantity
-op(t1::TemporalUnion, t2::TemporalUnion) = op(is_either_datetime(t1, t2), t1, t2) # Entry for TemporalUnion comparisons.
+op(::BothDateTime, t1, t2) = op(t1, t2) # KEYNOTE: Causes StackOverflow as it goes to op(t1::TemporalUnion, t2::TemporalUnion) again
+op(t1::TemporalUnion, t2::TemporalUnion) = op(is_either_datetime(typeof(t1), typeof(t2)), t1, t2) # Entry for TemporalUnion comparisons.
 
-is_either_datetime(::DateTime, ::TemporalCoordinate) = EitherDateTime()
-is_either_datetime(::TemporalCoordinate, ::DateTime) = EitherDateTime()
-is_either_datetime(::TemporalCoordinate, ::TemporalCoordinate) = NeitherDateTime()
-is_either_datetime(::DateTime, ::DateTime) = BothDateTime()
+is_either_datetime(::Type{DateTime}, ::Type{TemporalCoordinate}) = EitherDateTime()
+is_either_datetime(::Type{TemporalCoordinate}, ::Type{DateTime}) = EitherDateTime()
+is_either_datetime(::Type{TemporalCoordinate}, ::Type{TemporalCoordinate}) = NeitherDateTime()
+is_either_datetime(::Type{DateTime}, ::Type{DateTime}) = BothDateTime()
 
 # Comparing to `DateTime`
 function Base.:(==)(t1::TemporalCoordinate, t2::DateTime)
