@@ -17,12 +17,12 @@ end
 
 @testset "Test Add/Substract" begin
     using Dates
-    Δt = Hour(5998)
+    Δt = 5998u"hr"
     dt = DateTime(2024, 10, 7)
     evt0 = EventTimeMS(dt)
     evt1 = EventTimeJD(dt) + Δt
     subtracted_t = (evt1 - evt0)
-    @test EventTimeJD(dt + subtracted_t) == evt1
+    @test isapprox(EventTimeJD(dt + subtracted_t), evt1)
 
     @test isapprox(EventTimeJD(dt) + Δt, EventTimeMS(dt) + Δt) # comparison between different unit will encounter promotion, which may result is numerical error.
 
