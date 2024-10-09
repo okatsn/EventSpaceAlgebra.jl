@@ -1,21 +1,31 @@
+# # For EventTime
 
-
-# # For the temporal distance between two event.
-# TODO: "-" functions for eventTime scale with eventTime of the same unit. (output: duration)
-# TODO: "-" functions for eventTime scale with eventTime of a different unit. (output: duration)
-function Base.:-(t1::EventTime{U1}, t2::EventTime{U2}) where {U1,U2}
-    # Convert t2 to the unit of t1
-    t2_converted = EventTime{U1}(uconvert(U1, t2.value))
-    Duration{U1}(t1.value - t2_converted.value)
+"""
+`Base.:-(t1::EventTime, t2::EventTime)`.
+Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
+"""
+function Base.:-(t1::EventTime, t2::EventTime)
+    to_datetime(t1) - to_datetime(t2)
 end
 
-# # For referenced temporal and spatial points:
-# TODO: "+" and "-" functions for eventTime scale with duration. (output: DateTime)
+function Base.:-(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
+    EventTime{T,U}(t1.value - t2)
+end
 
+function Base.:-(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
+    EventTime{T,U}(t1.value - Quantity(Δt))
+end
 
+function Base.:+(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
+    EventTime{T,U}(t1.value + t2)
+end
 
-# TODO: Test output types above.
+function Base.:+(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
+    EventTime{T,U}(t1.value + Quantity(Δt))
+end
 
+# Ensure the commutative property:
+Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
 
 
 # # Postponed because of there is no immediate necessity.

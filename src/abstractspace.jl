@@ -1,4 +1,8 @@
+"""
+Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`; it is the conventional interface across this package. See `comparisonop.jl` for how this interface is used.
+"""
 abstract type EventCoordinate end
+
 abstract type TemporalCoordinate{T,U} <: EventCoordinate end
 
 """
@@ -14,7 +18,7 @@ Use with `Unitful` to define `EventTime` of arbitrary units:
 
 ```jldoctest
 
-using EventSpaceAlgebra, Unitful
+using EventSpaceAlgebra
 EventTime(5u"ms_epoch")
 
 true
@@ -24,18 +28,49 @@ true
 true
 ```
 
-# TODO: Define `isless`, `isapprox` and perhaps `isequal` for the following code to run. Please go to `comparisonop.jl`.
-
 Conversion between `ms_epoch` and `jd`:
 
-```
-evt_ms = EventTimeMS(123)
-evt_jd = uconvert(u"jd", evt_ms.value)
-EventTime(evt_jd) == evt_ms
+```jldoctest
+using Dates, EventSpaceAlgebra
+dt = DateTime(2024, 10, 7);
+evt_ms = EventTimeMS(dt)
+evt_jd = uconvert(u"jd", evt_ms)
+evt_jd == evt_ms
 
 # output
 
-true # FIXME: not a jldoctest yet.
+true
+```
+
+
+Please be aware of possible conversion error:
+
+```@repl a123
+using Dates, EventSpaceAlgebra
+Δt = Hour(5998);
+dt = DateTime(2024, 10, 7);
+uconvert(u"jd", EventTimeMS(dt + Δt)) == EventTimeJD(dt + Δt) # true
+uconvert(u"ms_epoch", EventTimeJD(dt + Δt)) == EventTimeMS(dt + Δt) # false
+```
+These error are originated from promotion (see `Unitful`'s quantities.jl, for example):
+
+```@repl a123
+a = EventTimeJD(dt + Δt);
+b = EventTimeMS(dt + Δt);
+(ap, bp) = promote(a.value, b.value);
+ap - bp
+a == b
+isapprox(a, b)
+```
+
+By the way, you can compare `EventTime` directly with `DateTime`, the mechanism is convert `EventTime` using `to_datetime`, and then makes comparison
+```jldoctest
+using Dates, EventSpaceAlgebra
+DateTime(0000, 1, 1) == EventTimeMS(0)
+
+# output
+
+true
 ```
 
 """
@@ -83,16 +118,16 @@ and https://docs.julialang.org/en/v1/manual/types/#Type-Aliases
 
 Noted that since `EventTimeMS` is abstract, the `EventTime` interface is not available.
 
+Noted that `ms_epoch` is defined as an affine unit that against `Unitful.ms`. That is, `uconvert` between `ms` and `ms_epoch` is exactly affined as-is.
 ```jldoctest
 julia> using EventSpaceAlgebra, Unitful
 
-julia> EventTimeMS(5u"ms_epoch")
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Int64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+julia> isequal(EventTimeMS(5), EventTime(5u"ms"))
+true
 
-julia> EventTimeMS(5.0u"ms_epoch") # Dispatched to `EventTime` method
-ERROR: MethodError: no method matching (EventTimeMS)(::Quantity{Float64, 𝐓, Unitful.FreeUnits{(ms_epoch,), 𝐓, nothing}})
+julia> isequal(Quantity(5u"ms_epoch"), Quantity(5u"ms"))
+true
 ```
-
 """
 EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 
@@ -102,7 +137,7 @@ EventTimeMS{T} = EventTime{T,typeof(ms_epoch)} where {T<:Real}
 # Example
 
 ```jldoctest testmsep
-using EventSpaceAlgebra, Unitful
+using EventSpaceAlgebra
 EventTime(5, ms_epoch) == EventTimeMS(5)
 
 # output
@@ -172,7 +207,7 @@ false
 ```
 
 ```jldoctest testjd
-julia> using EventSpaceAlgebra, Unitful
+julia> using EventSpaceAlgebra
 ```
 
 ```jldoctest testjd
@@ -181,9 +216,6 @@ EventTimeJD{Float64}(5.0 jd)
 
 julia> b = EventTime(5u"jd")
 EventTimeJD{Int64}(5 jd)
-
-julia> EventTimeJD{Int64}
-EventTimeJD{Int64} (alias for EventTime{Int64, Unitful.FreeUnits{(jd,), 𝐓, nothing}})
 
 julia> typeof(a) <: EventTimeJD
 true
@@ -221,15 +253,3 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
-
-const epoch_julian_diff_ms = DateTime(0000, 1, 1) - DateTime(-4713, 11, 24, 12, 00, 00)
-
-
-function EventTimeJD{T}(evt::EventTimeMS) where {T}
-    EventTime{T,typeof(jd)}(uconvert(jd, evt.value + epoch_julian_diff_ms))
-end
-
-
-function EventTimeMS{T}(evt::EventTimeJD) where {T}
-    EventTime{T,typeof(ms_epoch)}(uconvert(ms_epoch, evt.value) - epoch_julian_diff_ms)
-end

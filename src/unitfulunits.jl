@@ -1,4 +1,39 @@
 # KEYNOTE: To dispatch on unit, please use e.g., typeof(ms_epoch). See `to_datetime`
+const julianday0 = Dates.julian2datetime(0)
+const epochms0 = Dates.epochms2datetime(0)
+
+const epoch_julian_diff_ms = (epochms0 - julianday0).value
+const epoch_julian_diff_d = floor(Millisecond(epoch_julian_diff_ms), Day).value + (julianday0 - floor(julianday0, Day)) / Millisecond(Day(1))
+
+# # Following the official step and define the absolute unit first:
+# https://painterqubits.github.io/Unitful.jl/stable/temperature/
+"""
+The time unit in unit `Unitful.ms` for `EventSpaceAlgebra.ms_epoch`'s reference.
+
+```jldoctest
+julia> using EventSpaceAlgebra
+
+julia> 0u"ms" == 0u"ms_epoch"
+true
+
+julia> uconvert(u"ms", 0u"ms_epoch")
+0 ms
+```
+"""
+@unit ms_abs "ms_abs" AbsoluteMillisecond 1 * u"ms" false
+
+"""
+The time unit in unit `Unitful.d` for `EventSpaceAlgebra.jd`'s reference.
+This makes the `0u"d"` mutually the same as `0u"jd"`.
+
+```jldoctest
+julia> using EventSpaceAlgebra
+
+julia> uconvert(u"jd", 0u"d").val == EventSpaceAlgebra.epoch_julian_diff_d # which is about 1.7210595e6 jd
+true
+```
+"""
+@unit d_abs "d_abs" AbsoluteDay 1 * u"d" false
 
 #
 """
@@ -14,10 +49,16 @@ Quantity(5, ms_epoch) == 5u"ms_epoch"
 true
 ```
 """
-@unit ms_epoch "ms_epoch" EpochMillisecond 1u"ms" false
+@affineunit ms_epoch "ms_epoch" 0 * ms_abs
+# @unit jms_internal "jms_internal" JulianMillisecond 1u"ms" false
+# @unit ms_epoch "ms_epoch" EpochMillisecond 1u"ms" false
 
 """
 Absolute time stamp unit Julian Day (of each day fixed to the length 86400 seconds).
 To dispatch by this unit, please use e.g., `typeof(jd)`.
 """
-@unit jd "jd" JulianDay 86400u"s" false  # 1 Julian day = 86400 seconds
+@affineunit jd "jd" -epoch_julian_diff_d * d_abs
+# @unit jd "jd" JulianDay 86400u"s" false  # 1 Julian day = 86400 seconds
+
+# @affineunit d_epoch "d_epoch" Dates.datetime2julian(epochms0) * jd
+# @affineunit ms_epoch "ms_epoch" Dates.datetime2julian(epochms0) * jd

@@ -12,6 +12,15 @@
     evt2a = EventTimeJD(d_epoch)
     @test to_datetime(evt1) == to_datetime(evt1a) == dt
     @test to_datetime(evt2) == to_datetime(evt2a) == dt
-    @test EventTimeJD{Float64}(evt1a) == evt2a
-    @test EventTimeMS{Int}(evt2a) == evt1a
+    @test uconvert(u"jd", evt1a) == evt2a
+    @test uconvert(u"ms_epoch", evt2a) == evt1a
+
+
+    # Test whether `epoch_julian_diff_d` are calculated correctly (against `epochms0`)
+    rounded_day = floor(EventSpaceAlgebra.epoch_julian_diff_d)
+    inexact_day = EventSpaceAlgebra.epoch_julian_diff_d - rounded_day
+
+    @test EventSpaceAlgebra.julianday0 + Day(rounded_day) + Hour(24 * inexact_day) == EventSpaceAlgebra.epochms0
+    @test to_datetime(EventTimeMS(EventSpaceAlgebra.epochms0)) == to_datetime(EventTimeJD(EventSpaceAlgebra.epochms0))
+
 end
