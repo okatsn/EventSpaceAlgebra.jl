@@ -39,13 +39,15 @@
 
 
 # # Comparing to `DateTime`
-function Base.:(==)(t1::TemporalCoordinate, t2::DateTime)
-    ==(to_datetime(t1), t2)
+for op in (:(==), :isless)
+    @eval function Base.$op(t1::TemporalCoordinate, t2::DateTime)
+        $op(to_datetime(t1), t2)
+    end
+
+    @eval function Base.$op(t1::DateTime, t2::TemporalCoordinate)
+        $op(t1, to_datetime(t2))
+    end
 end
-
-# For commutative property.
-
-Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = ==(t1, t2)
 
 
 # # Spatial and Temporal coordinate comparison operation
@@ -65,9 +67,6 @@ Base.showerror(io::IO, e::CoordinateMismatch) = print(io, e.msg)
 # throw(CoordinateMismatch("You should not compare different coordinate"))
 # or
 # throw(CoordinateMismatch())
-
-
-
 
 
 for op in (:(==), :isapprox)
