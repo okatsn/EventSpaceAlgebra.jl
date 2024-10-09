@@ -24,10 +24,48 @@ end
 # Ensure the commutative property:
 Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
 
+# Substract of the same type.
+for op in (:-,), L in (:Latitude, :Longitude, :Depth) # This is similar to that in comparisonop.jl
+    @eval function Base.$op(t1::$L, t2::$L)
+        $op(t1.value, t2.value)
+    end
+end
+
+# Add/Subtract of EventCoordinate by other types:
+
+struct AlsoEventCoordinate end
+struct NotEventCoordinate end
+
+is_b_evt_coordinate(::Type{<:EventCoordinate}) = AlsoEventCoordinate()
+is_b_evt_coordinate(::Type{<:Any}) = NotEventCoordinate() # anything else
+
+
+# a is certainly EventCoordinate
+for op in (:+, :-)
+    @eval begin
+        Base.$op(::AlsoEventCoordinate, a, b) = $op(a, b) # if b is also EventCoordinate, fall back to the operation of the same type (defined before; for `+`, there will be a MethodError since it is not defined)
+        Base.$op(::NotEventCoordinate, a, b) = typeof(a).name.wrapper($op(a.value, b)) # if b is not EventCoordinate, do the calculation at the `Unitful.Quantity` level, then encapsule the results as `T::EventCoordinate`.
+
+    end
+    for L in (:Latitude, :Longitude, :Depth)
+        @eval begin
+            function Base.$op(a::$L, b)
+                $L($op(is_b_evt_coordinate(typeof(b)), a, b))
+            end
+        end
+    end
+end
+
+# For those who has commutative properties
+for op in (:+,), L in (:Latitude, :Longitude, :Depth)
+    @eval function Base.$op(b, a::$L)
+        $op(is_b_evt_coordinate(typeof(b)), a, b)
+    end
+end
+
 
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.
-# - "+" functions for Longitude (Latitude) with Angle units.
 # - "-" functions for Longitude (Latitude) with Longitude (Latitude) of a different unit. (output: Quantity of unit Angle)
 # - "-" functions for Longitude (Latitude) with Angle units. (output: Longitude and Latitude)
 
