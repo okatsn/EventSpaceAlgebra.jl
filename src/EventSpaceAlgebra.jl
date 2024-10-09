@@ -22,6 +22,7 @@ export uconvert
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
+include("algebra/generalop.jl")
 include("algebra/commutativeop.jl")
 include("algebra/noncommutative.jl")
 
