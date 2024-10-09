@@ -40,3 +40,17 @@ for op in (:(==), :isapprox), AC in (:Latitude, :Longitude, :Depth, :EventTime)
         $op(t1.value, t2.value)
     end
 end
+
+
+# # Add
+
+function Base.:+(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
+    EventTime{T,U}(t1.value + t2)
+end
+
+function Base.:+(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
+    EventTime{T,U}(t1.value + Quantity(Δt))
+end
+
+# Ensure the commutative property:
+Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt

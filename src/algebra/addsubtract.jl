@@ -1,3 +1,4 @@
+# # (This script is NOT included and remains as a space of pure comments.)
 # # For EventTime
 
 """
@@ -5,24 +6,8 @@
 Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
 """
 
-function Base.:-(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
-    EventTime{T,U}(t1.value - t2)
-end
 
-function Base.:-(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
-    EventTime{T,U}(t1.value - Quantity(Δt))
-end
 
-function Base.:+(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
-    EventTime{T,U}(t1.value + t2)
-end
-
-function Base.:+(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
-    EventTime{T,U}(t1.value + Quantity(Δt))
-end
-
-# Ensure the commutative property:
-Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
 
 
 # # Postponed because of there is no immediate necessity.
