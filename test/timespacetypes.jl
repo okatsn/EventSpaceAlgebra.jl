@@ -56,9 +56,19 @@ end
     # float v.s. int
     @test Longitude(0.5π * u"rad") == Longitude(90 * u"°")
     @test Longitude(1π * u"rad") == Longitude(180 * u"°")
+    # # Prohibit comparisons over different coordinates.
     # Longitude and Latitude shouldn't be equal.
     a = 0.5π * u"rad"
-    @test Latitude(a) != Longitude(a)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) != Longitude(a)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) == Longitude(a)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) != Depth(5u"km")
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) == Depth(5u"km")
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) != EventTime(5.2u"jd")
+    @test_throws EventSpaceAlgebra.CoordinateMismatch Latitude(a) == EventTime(5.2u"jd")
+    # of different parameter should work
+    @test EventTime(5u"jd") == EventTime(5.0u"jd")
+    @test Depth(2930u"m") == Depth(2.930u"km")
+
 
     # You cannot compare Latitude with Longitude.
     @test_throws MethodError Latitude(a) < Longitude(a)

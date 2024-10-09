@@ -52,3 +52,24 @@ for op in (:(==), :isapprox), AC in (:Latitude, :Longitude, :Depth)
         $op(t1.value, t2.value)
     end
 end
+
+
+struct CoordinateMismatch <: Exception
+    msg::String
+end
+CoordinateMismatch() = CoordinateMismatch("You should not compare different coordinate")
+Base.showerror(io::IO, e::CoordinateMismatch) = print(io, e.msg)
+# To use:
+# throw(CoordinateMismatch("You should not compare different coordinate"))
+# or
+# throw(CoordinateMismatch())
+
+
+
+
+
+for op in (:(==), :isapprox)
+    @eval function Base.$op(t1::A, t2::B) where {A<:EventCoordinate} where {B<:EventCoordinate}
+        throw(CoordinateMismatch())
+    end
+end
