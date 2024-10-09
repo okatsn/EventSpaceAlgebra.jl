@@ -60,6 +60,11 @@ end
     @test Latitude(20u"°") + 10u"°" == Latitude(30u"°")
     @test Longitude(20u"°") - 10u"°" == Longitude(10u"°")
     @test Latitude(20u"°") - 10u"°" == Latitude(10u"°")
+    @test Longitude(20u"°") + (1 // 2) * π * u"rad" == Longitude(110u"°")
+    @test Latitude(0u"°") + (1 // 2) * π * u"rad" == Latitude(90u"°")
+    @test Longitude(180 * u"°") - (1 // 2) * π * u"rad" == Longitude(90u"°")
+    @test Latitude(90u"°") - (1 // 2) * π * u"rad" == Latitude(0u"°")
+    # TODO: Longitude over 180°, Latitude for over 90° are not tested yet.
 
 
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)

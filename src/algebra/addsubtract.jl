@@ -4,6 +4,7 @@
 `Base.:-(t1::EventTime, t2::EventTime)`.
 Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
 """
+# TODO: Rename "comparisonop.jl" as it includes EventTime-wise subtraction.
 
 function Base.:-(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
     EventTime{T,U}(t1.value - t2)
@@ -26,6 +27,42 @@ Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
 function Base.:+(t1::Quantity, t2::EventTime{T,U}) where {T} where {U}
     EventTime{T,U}(t2.value + t1)
 end
+
+# # Spatial Coordinate
+# Must convert to degree before operation, because something like `2 * π * u"rad" + 1u"°"` returns Float64.
+
+for AC in (:Latitude, :Longitude, :Depth)
+    @eval begin
+        function Base.:+(t1::$AC, t2)
+            $AC(+(t1.value, t2))
+        end
+        function Base.:+(t1, t2::$AC)
+            +(t2, t1)
+        end
+        if $AC == :Depth
+        else
+            function Base.:+(t1::$AC, t2::EventAngleRadian)
+                +(t1, uconvert(u"°", t2))
+            end
+        end
+    end
+end
+
+
+for AC in (:Latitude, :Longitude, :Depth)
+    @eval begin
+        function Base.:-(t1::$AC, t2)
+            $AC(-(t1.value, t2))
+        end
+        if $AC == :Depth
+        else
+            function Base.:-(t1::$AC, t2::EventAngleRadian)
+                -(t1, uconvert(u"°", t2))
+            end
+        end
+    end
+end
+
 
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.
