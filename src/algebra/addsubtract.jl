@@ -28,6 +28,11 @@ end
 Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
 
 
+for op in (:-,), L in (:Longitude, :Latitude, :Depth)
+    @eval function Base.$op(l1::$L, l2::$L)
+        $op(l1.value, l2.value)
+    end
+end
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.
 # - "+" functions for Longitude (Latitude) with Angle units.

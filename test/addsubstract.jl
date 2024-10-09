@@ -38,7 +38,23 @@ end
     @test EventTimeJD(5) + 86400u"s" == EventTimeJD(6)
     @test EventTimeJD(5) - 86400u"s" == EventTimeJD(4)
 
-    #     # Coordinate of different type should not be subtractable
+    # # Spatial
+    @test Longitude(5u"°") - Longitude(1u"°") == 4u"°"
+    @test Longitude(5.0u"°") - Longitude(1u"°") == 4.0u"°"
+    @test Latitude(5u"°") - Latitude(1u"°") == 4u"°"
+    @test Latitude(5.0u"°") - Latitude(1u"°") == 4.0u"°"
+    @test_throws MethodError Longitude(5u"°") + Longitude(1u"°")
+    @test_throws MethodError Latitude(5u"°") + Latitude(1u"°")
+    @test_throws MethodError Longitude(5u"°") - Latitude(1u"°")
+    @test_throws MethodError Latitude(5u"°") - Longitude(1u"°")
+
+
+    @test Depth(5u"m") - Depth(1u"m") == 4u"m"
+    @test Depth(5.0u"m") - Depth(1u"m") == 4.0u"m"
+    @test_throws MethodError Depth(5u"m") + Depth(1u"m")
+    # Coordinate of different type should not be subtractable
+
+
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
 
