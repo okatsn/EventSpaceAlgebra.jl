@@ -8,4 +8,6 @@ function to_datetime(t::EventTimeJD)
     Dates.julian2datetime(t.value.val)
 end
 
+to_datetime(t::DateTime) = t
+
 Dates.DateTime(evt::EventTime) = to_datetime(evt)

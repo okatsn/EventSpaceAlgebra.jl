@@ -38,7 +38,24 @@
 # end
 
 
-# # Comparing to `DateTime`
+struct EitherDateTime end
+struct NeitherDateTime end
+struct BothDateTime end
+TemporalUnion = Union{DateTime,TemporalCoordinate}
+
+# # Comparing TemporalUnion struct.
+
+op(::EitherDateTime, t1, t2) = op(to_datetime(t1), to_datetime(t2)) # comparison between two Dates.DateTime
+op(::NeitherDateTime, t1, t2) = op(t1.value, t2.value) # comparison between two Unitful.Quantity
+op(::BothDateTime, t1, t2) = op(t1, t2) # comparison between two Unitful.Quantity
+op(t1::TemporalUnion, t2::TemporalUnion) = op(is_either_datetime(t1, t2), t1, t2) # Entry for TemporalUnion comparisons.
+
+is_either_datetime(::DateTime, ::TemporalCoordinate) = EitherDateTime()
+is_either_datetime(::TemporalCoordinate, ::DateTime) = EitherDateTime()
+is_either_datetime(::TemporalCoordinate, ::TemporalCoordinate) = NeitherDateTime()
+is_either_datetime(::DateTime, ::DateTime) = BothDateTime()
+
+# Comparing to `DateTime`
 function Base.:(==)(t1::TemporalCoordinate, t2::DateTime)
     ==(to_datetime(t1), t2)
 end
@@ -49,7 +66,7 @@ Base.:(==)(t2::DateTime, t1::TemporalCoordinate) = ==(t1, t2)
 
 
 # # Spatial and Temporal coordinate comparison operation
-for op in (:(==), :isapprox, :isless), AC in (:Latitude, :Longitude, :Depth, :EventTime)
+for op in (:(==), :isapprox, :isless), AC in (:Latitude, :Longitude, :Depth)
     @eval function Base.$op(t1::$AC, t2::$AC)
         $op(t1.value, t2.value)
     end

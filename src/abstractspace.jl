@@ -1,5 +1,5 @@
 """
-Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`; it is the conventional interface across this package.
+Any concrete type `::EventCoordinate` should be constructed as a `struct` with single field `value` of `Unitful.Quantity`; it is the conventional interface across this package. See `comparisonop.jl` for how this interface is used.
 """
 abstract type EventCoordinate end
 
