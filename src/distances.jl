@@ -51,9 +51,11 @@ end
 
 Geodesy.ECEF(args::EventCoordinate...; datum=wgs84) = ECEF(LLA(args...), datum)
 
-
 Geodesy.LLA(evt::AbstractLLPoint) = LLA(evt.lat, evt.lon, evt.depth)
 Geodesy.ECEF(evt::AbstractLLPoint; kwargs...) = ECEF(evt.lat, evt.lon, evt.depth; kwargs...)
+
+Geodesy.ENU(evt::AbstractLLPoint, ref::AbstractLLPoint; datum=wgs84) = ENU(LLA(evt), LLA(ref), datum)
+
 
 # # Optional
 # Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)

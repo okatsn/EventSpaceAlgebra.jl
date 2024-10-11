@@ -42,7 +42,8 @@ end
     @test LLA(args1...) == LLA(pt1) == lla1
     @test ECEF(args0...) == ECEF(pt0) == ECEF(lla0, wgs84)
 
-
+    @test ENU(lla0, lla1, wgs84) == ENU(pt0, pt1)
+    @test isapprox(ENU(pt0, pt1), ENU(0, 0, 1000))
 
 
 
