@@ -30,4 +30,13 @@ include("algebra/addsubtract.jl")
 using Dates
 include("datetimeconv.jl")
 export to_datetime
+
+
+
+using Distances
+# include("eventpoint.jl")
+include("distances.jl")
+export haversine
+
+
 end
