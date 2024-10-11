@@ -30,5 +30,6 @@ end
 @testset "Geodesic extensions" begin
     using Geodesy
     @test LLA(Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(1.0u"km")) == LLA(-27.468937, 153.023628, -1000.0)
-    @test LLA(Longitude(153.023628u"°"), Latitude(-27.468937u"°"), Depth(1.0u"km")) == LLA(-27.468937, 153.023628, -1000.0)
+    @test ECEF(Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(-0.0)) == ECEF(LLA(-27.468937, 153.023628, 0.0), wgs84)
+
 end
