@@ -53,6 +53,20 @@ ArbitraryPoint(lat::Latitude, lon::Longitude) = ArbitraryPoint(nothing, lat, lon
 ArbitraryPoint(lat::Latitude, lon::Longitude, depth::Depth) = ArbitraryPoint(nothing, lat, lon, nothing, depth)
 ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude, depth::Depth) = ArbitraryPoint(time, lat, lon, nothing, depth)
 
+# Interface
+
+for op in (:+, :-), (C, U, v) in [(:Latitude, :deg_N, :lat), (:Longitude, :deg_E, :lon)]
+    @eval function Base.$op(a::ArbitraryPoint, b::Quantity{T,D,<:typeof($U)}) where {T,D}
+        a.$v = $C((a.$v.value.val + b.val) * u"°")
+    end
+
+    if op == :+
+        @eval function Base.$op(b::Quantity{T,D,<:typeof($U)}, a::ArbitraryPoint) where {T,D}
+            $op(a, b)
+        end
+    end
+end
+
 
 # CHECKPOINT: from "Implement Distance Calculations Between Coordinates"
 # - `haversine_distance` between two `EventPoint`.

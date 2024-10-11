@@ -7,7 +7,7 @@ function __init__()
     Unitful.register(@__MODULE__)
 end
 export @u_str
-export ms_epoch, jd
+export ms_epoch, jd, deg_N, deg_E
 
 include("abstractspace.jl")
 export EventTime, EventTimeJD, EventTimeMS

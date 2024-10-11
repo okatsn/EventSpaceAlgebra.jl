@@ -70,4 +70,6 @@ To dispatch by this unit, please use e.g., `typeof(jd)`.
 # - Also prohibit `uconvert` between between u"°" and u"°N".
 # - This may also involves normalization (e.g., Latitude of -10° => 10°S; 110° => 70°N)
 # - This will involve redefinition in `EventAngleDegree{T}` and thus `Longitude{T}`
-# @unit °N "°N" DegreeNorth 1 * u"°" false
+
+@unit deg_N "°N" DegreeNorth 1 * u"°" false
+@unit deg_E "°E" DegreeEast 1 * u"°" false
