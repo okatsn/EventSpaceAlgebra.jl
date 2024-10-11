@@ -57,14 +57,14 @@ end
     @test_throws MethodError Depth(5u"m") + Depth(1u"m")
 
     # `+` and `-` methods on spatial coordinates with quantity.
-    @test Depth(5u"km") + 50u"m" == Depth(5050u"m")
+    @test 50u"m" + Depth(5u"km") == Depth(5u"km") + 50u"m" == Depth(5050u"m")
     @test Depth(5u"km") - 50u"m" == Depth(4950u"m")
-    @test Longitude(20u"°") + 10u"°" == Longitude(30u"°")
-    @test Latitude(20u"°") + 10u"°" == Latitude(30u"°")
+    @test 10u"°" + Longitude(20u"°") == Longitude(20u"°") + 10u"°" == Longitude(30u"°")
+    @test 10u"°" + Latitude(20u"°") == Latitude(20u"°") + 10u"°" == Latitude(30u"°")
     @test Longitude(20u"°") - 10u"°" == Longitude(10u"°")
     @test Latitude(20u"°") - 10u"°" == Latitude(10u"°")
-    @test Longitude(20u"°") + (1 // 2) * π * u"rad" == Longitude(110u"°")
-    @test Latitude(0u"°") + (1 // 2) * π * u"rad" == Latitude(90u"°")
+    @test (1 // 2) * π * u"rad" + Longitude(20u"°") == Longitude(20u"°") + (1 // 2) * π * u"rad" == Longitude(110u"°")
+    @test (1 // 2) * π * u"rad" + Latitude(0u"°") == Latitude(0u"°") + (1 // 2) * π * u"rad" == Latitude(90u"°")
     @test Longitude(180 * u"°") - (1 // 2) * π * u"rad" == Longitude(90u"°")
     @test Latitude(90u"°") - (1 // 2) * π * u"rad" == Latitude(0u"°")
     # TODO: Longitude over 180°, Latitude for over 90° are not tested yet.
