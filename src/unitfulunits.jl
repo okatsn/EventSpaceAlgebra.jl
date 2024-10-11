@@ -62,3 +62,12 @@ To dispatch by this unit, please use e.g., `typeof(jd)`.
 
 # @affineunit d_epoch "d_epoch" Dates.datetime2julian(epochms0) * jd
 # @affineunit ms_epoch "ms_epoch" Dates.datetime2julian(epochms0) * jd
+
+
+# # todo: °N, °S, °E, °W for Longitude/Latitude; see the following concerns:
+# - This is not necessary, since currently +/- with struct Longitude/Latitude is complete.
+# - You have to prohibit comparison between u"°" and u"°N", that is, for example, for `1u"°N" == 1u"°"` shouldn't return `true`.
+# - Also prohibit `uconvert` between between u"°" and u"°N".
+# - This may also involves normalization (e.g., Latitude of -10° => 10°S; 110° => 70°N)
+# - This will involve redefinition in `EventAngleDegree{T}` and thus `Longitude{T}`
+# @unit °N "°N" DegreeNorth 1 * u"°" false
