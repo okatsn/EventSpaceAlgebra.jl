@@ -49,7 +49,7 @@ function Geodesy.LLA(lat::Latitude, lon::Longitude, dep::Depth)
     )
 end
 
-Geodesy.LLA(evt::EventPoint) = LLA(evt.lat, evt.lon, evt.depth)
+Geodesy.LLA(evt::AbstractLLPoint) = LLA(evt.lat, evt.lon, evt.depth)
 
 
 Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)

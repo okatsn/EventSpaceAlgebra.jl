@@ -1,3 +1,5 @@
+abstract type AbstractLLPoint end
+
 """
 
 # Example
@@ -29,13 +31,27 @@ nothing
 ```
 
 """
-struct EventPoint{T1,T2,T3,U1,U3,M}
+struct EventPoint{T1,T2,T3,U1,U3,M} <: AbstractLLPoint
     time::TemporalCoordinate{T1,U1}
     lat::Latitude{T2}
     lon::Longitude{T2}
     mag::EventMagnitude{M}
     depth::Depth{T3,U3}
 end
+
+
+mutable struct ArbitraryPoint <: AbstractLLPoint
+    time::Union{TemporalCoordinate,Nothing}
+    lat::Union{Latitude,Nothing}
+    lon::Union{Longitude,Nothing}
+    mag::Union{EventMagnitude,Nothing}
+    depth::Union{Depth,Nothing}
+end
+
+ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude) = ArbitraryPoint(time, lat, lon, nothing, nothing)
+ArbitraryPoint(lat::Latitude, lon::Longitude) = ArbitraryPoint(nothing, lat, lon, nothing, nothing)
+ArbitraryPoint(lat::Latitude, lon::Longitude, depth::Depth) = ArbitraryPoint(nothing, lat, lon, nothing, depth)
+ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude, depth::Depth) = ArbitraryPoint(time, lat, lon, nothing, depth)
 
 
 # CHECKPOINT: from "Implement Distance Calculations Between Coordinates"
