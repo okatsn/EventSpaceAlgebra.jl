@@ -34,9 +34,15 @@ export to_datetime
 
 
 using Distances
-# include("eventpoint.jl")
 include("distances.jl")
 export haversine
+
+
+include("magnitudescales.jl")
+export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, AbstractMagnitudeScale
+include("eventpoint.jl")
+export EventPoint
+
 
 
 end
