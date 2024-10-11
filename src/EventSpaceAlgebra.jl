@@ -32,16 +32,20 @@ include("datetimeconv.jl")
 export to_datetime
 
 
-
-using Distances
-include("distances.jl")
-export haversine
-
-
 include("magnitudescales.jl")
 export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, AbstractMagnitudeScale
+
+
 include("eventpoint.jl")
 export EventPoint
+
+using Distances, Geodesy
+include("distances.jl")
+export haversine
+export LLA
+
+
+
 
 
 

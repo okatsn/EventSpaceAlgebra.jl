@@ -39,3 +39,17 @@ end
 
 haversine_distance(t1::T, t2::T) where {T<:Tuple{<:Latitude,<:Longitude}} = haversine_distance(t1..., t2...)
 haversine_distance(t1::T, t2::T) where {T<:Tuple{<:Longitude,<:Latitude}} = haversine_distance(reverse(t1)..., reverse(t2)...)
+
+
+function Geodesy.LLA(lat::Latitude, lon::Longitude, dep::Depth)
+    LLA(
+        lat.value.val,
+        lon.value.val,
+        -uconvert(u"m", dep.value).val
+    )
+end
+
+Geodesy.LLA(evt::EventPoint) = LLA(evt.lat, evt.lon, evt.depth)
+
+
+Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)
