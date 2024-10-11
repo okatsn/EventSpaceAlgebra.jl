@@ -37,7 +37,7 @@ for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
             $AC($op(t1.value, t2))
         end
         # only `+` is commutative.
-        if $op == :+
+        if $op == + # Noted that it shouldn't be `== :+`
             function Base.$op(t1, t2::$AC)
                 $op(t2, t1)
             end
