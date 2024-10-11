@@ -42,7 +42,7 @@ export EventPoint
 using Distances, Geodesy
 include("distances.jl")
 export haversine
-export LLA
+export LLA, ArbitraryPoint, ECEF
 
 
 

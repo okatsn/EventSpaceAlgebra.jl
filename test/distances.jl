@@ -29,7 +29,21 @@ end
 
 @testset "Geodesic extensions" begin
     using Geodesy
-    @test LLA(Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(1.0u"km")) == LLA(-27.468937, 153.023628, -1000.0)
-    @test ECEF(Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(-0.0)) == ECEF(LLA(-27.468937, 153.023628, 0.0), wgs84)
+    args0 = (Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(-0.0))
+    lla0 = LLA(-27.468937, 153.023628, 0.0)
+
+    args1 = (Latitude(-27.468937u"°"), Longitude(153.023628u"°"), Depth(1.0u"km"))
+    lla1 = LLA(-27.468937, 153.023628, -1000.0)
+
+    pt0 = ArbitraryPoint(args0...)
+    pt1 = ArbitraryPoint(args1...)
+
+
+    @test LLA(args1...) == LLA(pt1) == lla1
+    @test ECEF(args0...) == ECEF(pt0) == ECEF(lla0, wgs84)
+
+
+
+
 
 end
