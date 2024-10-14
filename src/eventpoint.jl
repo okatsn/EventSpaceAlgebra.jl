@@ -56,19 +56,19 @@ ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude, depth::D
 # Interface
 
 
-function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(deg_N)}) where {T,D}
+function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(deg_N)}) where {T,D}
     apt.lat = apt.lat + uconvert(u"°", b) # because 1u"°" + 1.2u"deg_N" returns Float64
 end
 
-function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(deg_E)}) where {T,D}
+function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(deg_E)}) where {T,D}
     apt.lon = apt.lon + uconvert(u"°", b)
 end
 
-function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(dep_km)}) where {T,D}
+function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(dep_km)}) where {T,D}
     apt.depth = apt.depth + uconvert(u"km", b)
 end
 
-function shift!(apt::ArbitraryPoint, bs...)
+function shift!(apt::ArbitraryPoint, bs::Vararg{PointShiftingUnits})
     for b in bs
         shift!(apt, b)
     end
