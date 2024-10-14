@@ -73,3 +73,4 @@ To dispatch by this unit, please use e.g., `typeof(jd)`.
 
 @unit deg_N "°N" DegreeNorth 1 * u"°" false
 @unit deg_E "°E" DegreeEast 1 * u"°" false
+@unit dep_km "dep_km" DepthKM 1 * u"km" false

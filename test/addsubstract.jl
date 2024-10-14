@@ -69,6 +69,32 @@ end
     @test Latitude(90u"°") - (1 // 2) * π * u"rad" == Latitude(0u"°")
     # TODO: Longitude over 180°, Latitude for over 90° are not tested yet.
 
+    # # It is intended that deg_E/N is designed to be not compatible with Longitude/Latitude.
+    # Must to fail if the dimension is different:
+    @test_throws MethodError Longitude(32u"°") + 8u"deg_N"
+    @test_throws MethodError Latitude(32u"°") + 8u"deg_E"
+    # Designed to make code to be easily maintainable and avoid ambiguity:
+    @test_throws MethodError Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
+    @test_throws MethodError Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
+    @test_throws MethodError Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
+    @test_throws MethodError Latitude(32u"°") - 8u"deg_N" == Latitude(24u"°")
+
+    apt = ArbitraryPoint(EventTimeJD(5), Latitude(32u"°"), Longitude(24u"°"), nothing, Depth(5u"km"))
+
+    apt1 = apt + 8u"deg_E"
+    @test apt1.lat == apt.lat # not changed
+    @test apt1.lon == Longitude(32u"°")
+    @test apt1.depth == Depth(5u"km") # not changed
+    @test apt1.mag == nothing
+
+    apt2 = apt + 8u"deg_N"
+    @test apt2.lat == apt.lat
+    @test apt2.lon == apt.lon # not changed
+    @test apt2.depth == Depth(5u"km") # not changed
+    @test apt2.mag == nothing
+    # Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
+    # Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
+    # Latitude(32u"°") - 8u"deg_N" == Latitude(24u"°")
 
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
