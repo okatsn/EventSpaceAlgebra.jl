@@ -55,13 +55,14 @@ ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude, depth::D
 
 # Interface
 
-for op in (:+, :-), (C, U, v) in [(:Latitude, :deg_N, :lat), (:Longitude, :deg_E, :lon)]
-    @eval function Base.$op(a::ArbitraryPoint, b::Quantity{T,D,<:typeof($U)}) where {T,D}
-        a.$v = $C((a.$v.value.val + b.val) * u"°")
+
+for op in (:+, :-), (C, U) in [(:Latitude, :deg_N), (:Longitude, :deg_E), (:Depth, :dep_km)]
+    @eval function Base.$op(::$C, ::Quantity{T,D,<:typeof($U)}) where {T,D}
+        throw(UnitIncompatible())
     end
 
     if op == :+
-        @eval function Base.$op(b::Quantity{T,D,<:typeof($U)}, a::ArbitraryPoint) where {T,D}
+        @eval function Base.$op(b::Quantity{T,D,<:typeof($U)}, a::$C) where {T,D}
             $op(a, b)
         end
     end

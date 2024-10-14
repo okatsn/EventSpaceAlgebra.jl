@@ -71,13 +71,13 @@ end
 
     # # It is intended that deg_E/N is designed to be not compatible with Longitude/Latitude.
     # Must to fail if the dimension is different:
-    @test_throws MethodError Longitude(32u"°") + 8u"deg_N"
-    @test_throws MethodError Latitude(32u"°") + 8u"deg_E"
+    @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_N"
+    @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_E"
     # Designed to make code to be easily maintainable and avoid ambiguity:
-    @test_throws MethodError Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
-    @test_throws MethodError Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
-    @test_throws MethodError Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
-    @test_throws MethodError Latitude(32u"°") - 8u"deg_N" == Latitude(24u"°")
+    @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
+    @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
+    @test_throws UnitIncompatible Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
+    @test_throws UnitIncompatible Latitude(32u"°") - 8u"deg_N" == Latitude(24u"°")
 
     apt = ArbitraryPoint(EventTimeJD(5), Latitude(32u"°"), Longitude(24u"°"), nothing, Depth(5u"km"))
 

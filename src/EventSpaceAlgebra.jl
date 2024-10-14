@@ -1,5 +1,7 @@
 module EventSpaceAlgebra
 
+abstract type CustomError <: Exception end
+
 using Dates
 using Unitful
 include("unitfulunits.jl")
@@ -46,7 +48,7 @@ export LLA, ArbitraryPoint, ECEF
 
 
 
-
-
+# # Export error structures
+export UnitIncompatible, UnitMismatch
 
 end

@@ -133,3 +133,12 @@ Depth{Int64, Unitful.FreeUnits{(m,), 𝐋, nothing}}(5000 m)
 ```
 """
 Depth(n::Real) = Depth(n * u"km")
+
+
+struct UnitIncompatible <: CustomError
+    msg::String
+end
+UnitIncompatible() = UnitIncompatible("Direct operation with these units (deg_N, deg_E, dep_km) is intended to not compatible with EventCoordinate (Latitude, Longitude, Depth).")
+Base.showerror(io::IO, e::UnitIncompatible) = print(io, e.msg)
+# To use:
+# throw(UnitIncompatible("Direct o peration with these units (deg_N, deg_E, dep_km) is intended to not compatible with EventCoordinate (Latitude, Longitude, Depth)."))
