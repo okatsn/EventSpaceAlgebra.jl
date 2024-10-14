@@ -65,7 +65,7 @@ function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(deg_E)}) where {T,
 end
 
 function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(dep_km)}) where {T,D}
-    apt.depth = apt.depth + b
+    apt.depth = apt.depth + uconvert(u"km", b)
 end
 
 # +/- operations between the component in the following list is intended to be incompatible, because I want these operations to be carried out under the `shift!` interface instead (for easier code maintaining and to avoid confusion).

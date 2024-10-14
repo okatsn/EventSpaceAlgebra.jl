@@ -71,8 +71,8 @@ end
 
     # # It is intended that deg_E/N is designed to be not compatible with Longitude/Latitude.
     # Must to fail if the dimension is different:
-    @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_N"
-    @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_E"
+    @test_throws MethodError Longitude(32u"°") + 8u"deg_N"
+    @test_throws MethodError Latitude(32u"°") + 8u"deg_E"
     # Designed to make code to be easily maintainable and avoid ambiguity:
     @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
     @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
@@ -81,20 +81,159 @@ end
 
     apt = ArbitraryPoint(EventTimeJD(5), Latitude(32u"°"), Longitude(24u"°"), nothing, Depth(5u"km"))
 
-    apt1 = apt + 8u"deg_E"
-    @test apt1.lat == apt.lat # not changed
-    @test apt1.lon == Longitude(32u"°")
-    @test apt1.depth == Depth(5u"km") # not changed
-    @test apt1.mag == nothing
+    @test_throws MethodError apt + 8u"deg_E"
+    @test_throws MethodError apt + 8u"deg_N"
 
-    apt2 = apt + 8u"deg_N"
-    @test apt2.lat == apt.lat
-    @test apt2.lon == apt.lon # not changed
-    @test apt2.depth == Depth(5u"km") # not changed
-    @test apt2.mag == nothing
-    # Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
-    # Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
-    # Latitude(32u"°") - 8u"deg_N" == Latitude(24u"°")
+
+    # Test shifting Latitude by +3 deg_N
+    shift!(apt, 3u"deg_N")
+    @test apt.lat == Latitude(35u"°")   # 32° + 3°N = 35°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting Latitude by -5 deg_N
+    shift!(apt, -5u"deg_N")
+    @test apt.lat == Latitude(27u"°")   # 32° + (-5°N) = 27°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting Longitude by +10 deg_E
+    shift!(apt, 10u"deg_E")
+    @test apt.lon == Longitude(34u"°")  # 24° + 10°E = 34°
+
+    # Reset apt.lon to 24°
+    apt.lon = Longitude(24u"°")
+
+    # Test shifting Longitude by -15 deg_E
+    shift!(apt, -15u"deg_E")
+    @test apt.lon == Longitude(9u"°")   # 24° + (-15°E) = 9°
+
+    # Reset apt.lon to 24°
+    apt.lon = Longitude(24u"°")
+
+    # Test shifting Depth by +2 dep_km
+    shift!(apt, 2u"dep_km")
+    @test apt.depth == Depth(7u"km")    # 5 km + 2 km = 7 km
+
+    # Reset apt.depth to 5 km
+    apt.depth = Depth(5u"km")
+
+    # Test shifting Depth by -3 dep_km
+    shift!(apt, -3u"dep_km")
+    @test apt.depth == Depth(2u"km")    # 5 km + (-3 km) = 2 km
+
+    # Reset apt.depth to 5 km
+    apt.depth = Depth(5u"km")
+
+    # Test shifting with zero units (no changes should occur)
+    shift!(apt, 0u"deg_N")
+    @test apt.lat == Latitude(32u"°")
+
+    shift!(apt, 0u"deg_E")
+    @test apt.lon == Longitude(24u"°")
+
+    shift!(apt, 0u"dep_km")
+    @test apt.depth == Depth(5u"km")
+
+    # Test shifting with incompatible units (should throw errors)
+    @test_throws MethodError shift!(apt, 5u"kg")
+    @test_throws MethodError shift!(apt, 5u"m")
+    @test_throws MethodError shift!(apt, 5u"s")
+
+    # Test shifting Latitude beyond valid range (depending on implementation)
+    apt.lat = Latitude(85u"°")
+    shift!(apt, 10u"deg_N")
+    @test apt.lat == Latitude(95u"°")  # 85° + 10°N = 95°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting Longitude beyond 360 degrees (assuming no wrapping)
+    apt.lon = Longitude(350u"°")
+    shift!(apt, 20u"deg_E")
+    @test apt.lon == Longitude(370u"°") # 350° + 20°E = 370°
+
+    # Reset apt.lon to 24°
+    apt.lon = Longitude(24u"°")
+
+    # Test shifting Depth to negative value (if negative depth is allowed)
+    apt.depth = Depth(5u"km")
+    shift!(apt, -10u"dep_km")
+    @test apt.depth == Depth(-5u"km")   # 5 km + (-10 km) = -5 km
+
+    # Reset apt.depth to 5 km
+    apt.depth = Depth(5u"km")
+
+    # Test multiple shifts sequentially
+    shift!(apt, 5u"deg_N")
+    shift!(apt, 10u"deg_E")
+    shift!(apt, 3u"dep_km")
+    @test apt.lat == Latitude(37u"°")   # 32° + 5°
+    @test apt.lon == Longitude(34u"°")  # 24° + 10°
+    @test apt.depth == Depth(8u"km")    # 5 km + 3 km
+
+    # Reset apt to original values
+    apt.lat = Latitude(32u"°")
+    apt.lon = Longitude(24u"°")
+    apt.depth = Depth(5u"km")
+
+    # Test shifting with invalid units (should throw errors)
+    @test_throws MethodError shift!(apt, 5u"kg*m/s^2")
+    @test_throws MethodError shift!(apt, 5u"Hz")
+
+    # Ensure other fields remain unchanged
+    apt.time = EventTimeJD(5)
+    apt.mag = EventMagnitude{RichterMagnitude}(3.0)
+
+    shift!(apt, 5u"deg_N")
+    @test apt.time == EventTimeJD(5)
+    @test apt.mag == EventMagnitude{RichterMagnitude}(3.0)
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # # Test shifting with NaN (should throw an error)
+    # @test_throws MethodError shift!(apt, NaN * u"deg_N")
+
+    # # Test shifting with Inf (should throw an error)
+    # @test_throws MethodError shift!(apt, Inf * u"deg_N")
+
+    # Test that shift! modifies the original point in-place
+    apt.lat = Latitude(32u"°")
+    shift!(apt, 5u"deg_N")
+    @test apt.lat == Latitude(37u"°")   # Should be updated in-place
+
+    # Ensure shift! returns nothing (since it's an in-place operation)
+    @test shift!(apt, 5u"deg_N") == nothing
+
+    # Test shifting by a large negative number
+    apt.lat = Latitude(32u"°")
+    shift!(apt, -100u"deg_N")
+    @test apt.lat == Latitude(-68u"°")  # 32° + (-100°) = -68°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting by a large positive number
+    shift!(apt, 200u"deg_N")
+    @test apt.lat == Latitude(232u"°")  # 32° + 200° = 232°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting with a zero unit of an invalid dimension (should throw an error)
+    @test_throws MethodError shift!(apt, 0u"kg")
+
+    # Test shifting with multiple units in one call (if supported)
+    # Assuming shift! can handle multiple units
+    # function shift!(pt::ArbitraryPoint, uts::Vararg{MySpecializedUnits})
+    #     for ut in uts
+    #         shift!(pt, ut)
+    #     end
+    # end
+
 
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)

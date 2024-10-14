@@ -39,12 +39,12 @@ export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, 
 
 
 include("eventpoint.jl")
-export EventPoint
+export EventPoint, ArbitraryPoint, shift!
 
 using Distances, Geodesy
 include("distances.jl")
 export haversine
-export LLA, ArbitraryPoint, ECEF
+export LLA, ECEF
 
 
 
