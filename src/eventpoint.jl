@@ -57,21 +57,25 @@ ArbitraryPoint(time::TemporalCoordinate, lat::Latitude, lon::Longitude, depth::D
 
 
 function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(deg_N)}) where {T,D}
-    apt.lat = apt.lat + uconvert(u"°", b) # because 1u"°" + 1.2u"deg_N" returns Float64
+    apt.lat = apt.lat + (b.val * u"°") # because 1u"°" + 1.2u"deg_N" returns Float64
+    nothing
 end
 
 function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(deg_E)}) where {T,D}
-    apt.lon = apt.lon + uconvert(u"°", b)
+    apt.lon = apt.lon + (b.val * u"°")
+    nothing
 end
 
 function shift!(apt::ArbitraryPoint, b::Quantity{T,D,typeof(dep_km)}) where {T,D}
     apt.depth = apt.depth + uconvert(u"km", b)
+    nothing
 end
 
 function shift!(apt::ArbitraryPoint, bs::Vararg{PointShiftingUnits})
     for b in bs
         shift!(apt, b)
     end
+    nothing
 end
 # +/- operations between the component in the following list is intended to be incompatible, because I want these operations to be carried out under the `shift!` interface instead (for easier code maintaining and to avoid confusion).
 for op in (:+, :-), (C, U) in [(:Latitude, :deg_N), (:Longitude, :deg_E), (:Depth, :dep_km)]

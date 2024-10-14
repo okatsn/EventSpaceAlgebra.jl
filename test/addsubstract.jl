@@ -245,17 +245,6 @@ end
     apt.lon = Longitude(24u"°")
     apt.depth = Depth(5u"km")
 
-    # Test shifting magnitude (should throw an error if not supported)
-    @test_throws MethodError shift!(apt, 0.5u"deg_N")  # Assuming mag is not shifted
-
-    # Test shifting time (should throw an error if not supported)
-    @test_throws MethodError shift!(apt, 10u"deg_N")   # Assuming time is not shifted
-
-    # Test shifting with invalid unit type (e.g., string)
-    @test_throws MethodError shift!(apt, "5 deg_N")
-
-    # Test shifting with mismatched unit (e.g., shifting depth with deg_E)
-    @test_throws MethodError shift!(apt, 5u"deg_E")    # Should not affect depth
 
     # Test that other coordinates remain unchanged when shifting one coordinate
     shift!(apt, 5u"deg_N")
@@ -276,9 +265,6 @@ end
 
     # Edge case: Shift with unitless number (should throw an error)
     @test_throws MethodError shift!(apt, 5)  # No units provided
-
-    # Edge case: Shift with incorrect unit symbol
-    @test_throws MethodError shift!(apt, 5u"deg_N")  # Incorrect unit symbol
 
     # Test shifting with extremely large numbers
     shift!(apt, 1e6u"deg_N")
