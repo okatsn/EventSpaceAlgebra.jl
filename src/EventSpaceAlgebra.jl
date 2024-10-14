@@ -1,5 +1,7 @@
 module EventSpaceAlgebra
 
+abstract type CustomError <: Exception end
+
 using Dates
 using Unitful
 include("unitfulunits.jl")
@@ -7,7 +9,7 @@ function __init__()
     Unitful.register(@__MODULE__)
 end
 export @u_str
-export ms_epoch, jd
+export ms_epoch, jd, deg_N, deg_E, dep_km
 
 include("abstractspace.jl")
 export EventTime, EventTimeJD, EventTimeMS
@@ -37,16 +39,16 @@ export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, 
 
 
 include("eventpoint.jl")
-export EventPoint
+export EventPoint, ArbitraryPoint, shift!
 
 using Distances, Geodesy
 include("distances.jl")
 export haversine
-export LLA
+export LLA, ECEF
 
 
 
-
-
+# # Export error structures
+export UnitIncompatible, UnitMismatch
 
 end

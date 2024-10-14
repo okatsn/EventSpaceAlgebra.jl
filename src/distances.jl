@@ -49,7 +49,14 @@ function Geodesy.LLA(lat::Latitude, lon::Longitude, dep::Depth)
     )
 end
 
-Geodesy.LLA(evt::EventPoint) = LLA(evt.lat, evt.lon, evt.depth)
+Geodesy.ECEF(args::EventCoordinate...; datum=wgs84) = ECEF(LLA(args...), datum)
+
+Geodesy.LLA(evt::AbstractLLPoint) = LLA(evt.lat, evt.lon, evt.depth)
+Geodesy.ECEF(evt::AbstractLLPoint; kwargs...) = ECEF(evt.lat, evt.lon, evt.depth; kwargs...)
+
+Geodesy.ENU(evt::AbstractLLPoint, ref::AbstractLLPoint; datum=wgs84) = ENU(LLA(evt), LLA(ref), datum)
 
 
-Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)
+# # Optional
+# Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)
+# @test LLA(Longitude(153.023628u"°"), Depth(1.0u"km")) == LLA(-27.468937, 153.023628, -1000.0) # commutative property

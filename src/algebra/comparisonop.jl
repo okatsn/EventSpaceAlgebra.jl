@@ -61,7 +61,7 @@ for op in (:(==), :isapprox, :isless, :-), AC in (:Latitude, :Longitude, :Depth,
 end
 
 
-struct CoordinateMismatch <: Exception
+struct CoordinateMismatch <: CustomError
     msg::String
 end
 CoordinateMismatch() = CoordinateMismatch("You should not compare different coordinate")

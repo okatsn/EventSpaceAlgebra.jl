@@ -1,4 +1,4 @@
-struct UnitMismatch <: Exception end
+struct UnitMismatch <: CustomError end
 Base.showerror(io::IO, e::UnitMismatch) = print(io, "Unit mistach.")
 
 
