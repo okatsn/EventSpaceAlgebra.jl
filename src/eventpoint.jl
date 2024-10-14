@@ -68,6 +68,11 @@ function shift!(apt::ArbitraryPoint, b::Quantity{T,D,<:typeof(dep_km)}) where {T
     apt.depth = apt.depth + uconvert(u"km", b)
 end
 
+function shift!(apt::ArbitraryPoint, bs...)
+    for b in bs
+        shift!(apt, b)
+    end
+end
 # +/- operations between the component in the following list is intended to be incompatible, because I want these operations to be carried out under the `shift!` interface instead (for easier code maintaining and to avoid confusion).
 for op in (:+, :-), (C, U) in [(:Latitude, :deg_N), (:Longitude, :deg_E), (:Depth, :dep_km)]
     @eval function Base.$op(::$C, ::Quantity{T,D,<:typeof($U)}) where {T,D}

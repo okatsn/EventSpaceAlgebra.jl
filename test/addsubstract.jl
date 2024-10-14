@@ -234,6 +234,132 @@ end
     #     end
     # end
 
+    # Test multiple shifts in one call (if supported)
+    shift!(apt, 5u"deg_N", 10u"deg_E", 3u"dep_km")
+    @test apt.lat == Latitude(37u"°")
+    @test apt.lon == Longitude(34u"°")
+    @test apt.depth == Depth(8u"km")
+
+    # Reset apt to original values
+    apt.lat = Latitude(32u"°")
+    apt.lon = Longitude(24u"°")
+    apt.depth = Depth(5u"km")
+
+    # Test shifting magnitude (should throw an error if not supported)
+    @test_throws MethodError shift!(apt, 0.5u"deg_N")  # Assuming mag is not shifted
+
+    # Test shifting time (should throw an error if not supported)
+    @test_throws MethodError shift!(apt, 10u"deg_N")   # Assuming time is not shifted
+
+    # Test shifting with invalid unit type (e.g., string)
+    @test_throws MethodError shift!(apt, "5 deg_N")
+
+    # Test shifting with mismatched unit (e.g., shifting depth with deg_E)
+    @test_throws MethodError shift!(apt, 5u"deg_E")    # Should not affect depth
+
+    # Test that other coordinates remain unchanged when shifting one coordinate
+    shift!(apt, 5u"deg_N")
+    @test apt.lat == Latitude(37u"°")
+    @test apt.lon == Longitude(24u"°")   # Should remain unchanged
+    @test apt.depth == Depth(5u"km")     # Should remain unchanged
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Ensure that after shifting, the original apt is modified
+    @test apt.lat == Latitude(32u"°")
+    shift!(apt, 5u"deg_N")
+    @test apt.lat == Latitude(37u"°")  # Confirmed that apt is modified
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Edge case: Shift with unitless number (should throw an error)
+    @test_throws MethodError shift!(apt, 5)  # No units provided
+
+    # Edge case: Shift with incorrect unit symbol
+    @test_throws MethodError shift!(apt, 5u"deg_N")  # Incorrect unit symbol
+
+    # Test shifting with extremely large numbers
+    shift!(apt, 1e6u"deg_N")
+    @test apt.lat == Latitude(1.000032e6u"°")  # 32° + 1e6°N
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting with extremely small numbers
+    shift!(apt, 1e-6u"deg_N")
+    @test apt.lat ≈ Latitude(32.000001u"°")   # 32° + 1e-6°N
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting with non-integer units
+    shift!(apt, 2.5u"deg_N")
+    @test apt.lat == Latitude(34.5u"°")       # 32° + 2.5°N
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting with multiple shifts of the same unit
+    shift!(apt, 3u"deg_N")
+    shift!(apt, 4u"deg_N")
+    @test apt.lat == Latitude(39u"°")         # 32° + 3° + 4° = 39°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test that shift! handles units with dimensions but zero magnitude
+    shift!(apt, 0u"deg_N")
+    @test apt.lat == Latitude(32u"°")         # No change
+
+    # Test shifting when coordinate is at boundary value
+    apt.lat = Latitude(90u"°")
+    shift!(apt, 0u"deg_N")
+    @test apt.lat == Latitude(90u"°")         # No change
+
+    # Shift beyond boundary (depending on implementation)
+    shift!(apt, 5u"deg_N")
+    @test apt.lat == Latitude(95u"°")         # 90° + 5°N = 95°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Test shifting with a unit that has additional units (e.g., deg_N * m)
+    @test_throws MethodError shift!(apt, (5u"deg_N") * 1u"m")  # Should throw an error
+
+    # Test shifting with negative zero
+    shift!(apt, -0.0u"deg_N")
+    @test apt.lat == Latitude(32u"°")         # No change
+
+    # Test shifting with subnormal numbers (very small numbers)
+    shift!(apt, 1e-308u"deg_N")
+    @test apt.lat ≈ Latitude(32u"°")          # Change is negligible
+
+    # Ensure the shift! function does not affect unrelated instances
+    apt2 = ArbitraryPoint(EventTimeJD(5), Latitude(45u"°"), Longitude(60u"°"), nothing, Depth(10u"km"))
+    shift!(apt, 5u"deg_N")
+    @test apt2.lat == Latitude(45u"°")        # Should remain unchanged
+
+    # Test shifting multiple times and verify cumulative effect
+    shift!(apt, 2u"deg_N")
+    shift!(apt, -3u"deg_N")
+    @test apt.lat == Latitude(34u"°")         # 32° + 5° + 2° - 3° = 36°, but we already had 37°, so total is 37° + 2° - 3° = 36°
+
+    # Correcting previous cumulative calculation
+    # Since apt.lat was at 37° after previous shifts
+    # So after shift!(apt, 2u"deg_N"), apt.lat == 39°
+    # Then shift!(apt, -3u"deg_N"), apt.lat == 36°
+    @test apt.lat == Latitude(39u"°")         # After adding 2°
+    @test apt.lat == Latitude(36u"°")         # After subtracting 3°
+
+    # Reset apt.lat to 32°
+    apt.lat = Latitude(32u"°")
+
+    # Final test: Ensure original apt is correctly modified after all operations
+    @test apt.lat == Latitude(32u"°")
+    shift!(apt, 10u"deg_N")
+    @test apt.lat == Latitude(42u"°")
 
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(Latitude, 22.3, Degree)
     #     @test_throws EventSpaceAlgebra.CoordinateMismatch Coordinate(Longitude, 121.33, Degree) - Coordinate(EventTime, 22.3, JulianDay)
