@@ -328,16 +328,10 @@ end
     @test apt2.lat == Latitude(45u"°")        # Should remain unchanged
 
     # Test shifting multiple times and verify cumulative effect
+    apt.lat = Latitude(32u"°") # Reset apt.lat to 32°
     shift!(apt, 2u"deg_N")
     shift!(apt, -3u"deg_N")
-    @test apt.lat == Latitude(34u"°")         # 32° + 5° + 2° - 3° = 36°, but we already had 37°, so total is 37° + 2° - 3° = 36°
-
-    # Correcting previous cumulative calculation
-    # Since apt.lat was at 37° after previous shifts
-    # So after shift!(apt, 2u"deg_N"), apt.lat == 39°
-    # Then shift!(apt, -3u"deg_N"), apt.lat == 36°
-    @test apt.lat == Latitude(39u"°")         # After adding 2°
-    @test apt.lat == Latitude(36u"°")         # After subtracting 3°
+    @test apt.lat == Latitude(31u"°")
 
     # Reset apt.lat to 32°
     apt.lat = Latitude(32u"°")
