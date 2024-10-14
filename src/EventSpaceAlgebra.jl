@@ -35,7 +35,7 @@ export to_datetime
 
 
 include("magnitudescales.jl")
-export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, AbstractMagnitudeScale
+export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, MagnitudeScale
 export AnySizeScale, EventPointSize
 
 include("eventpoint.jl")
