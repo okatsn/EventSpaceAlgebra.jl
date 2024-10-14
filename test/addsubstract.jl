@@ -185,11 +185,11 @@ end
 
     # Ensure other fields remain unchanged
     apt.time = EventTimeJD(5)
-    apt.mag = EventMagnitude{RichterMagnitude}(3.0)
+    apt.size = EventMagnitude{RichterMagnitude}(3.0)
 
     shift!(apt, 5u"deg_N")
     @test apt.time == EventTimeJD(5)
-    @test apt.mag == EventMagnitude{RichterMagnitude}(3.0)
+    @test apt.size == EventMagnitude{RichterMagnitude}(3.0)
 
     # Reset apt.lat to 32°
     apt.lat = Latitude(32u"°")

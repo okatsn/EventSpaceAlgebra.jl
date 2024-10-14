@@ -6,7 +6,7 @@ abstract type AbstractLLPoint end
 
 
 
-```jldoctest
+```jldoctest a7468
 using EventSpaceAlgebra, CWBProjectSummaryDatasets, DataFrames, Dates
 
 catalog = CWBProjectSummaryDatasets.dataset("EventMag4", "Catalog")
@@ -30,12 +30,30 @@ nothing
 
 ```
 
+```jldoctest a7468
+evpt = EventPoint(
+    5, # jd
+    21, # °N
+    -3, # °E
+    -3.2 , # RichterMagnitude
+    1 # km depth
+)
+
+evpt.size
+
+# output
+
+EventMagnitude{RichterMagnitude}(-3.2)
+```
+
+
+
 """
 struct EventPoint{T1,T2,T3,U1,U3,M} <: AbstractLLPoint
     time::TemporalCoordinate{T1,U1}
     lat::Latitude{T2}
     lon::Longitude{T2}
-    mag::EventMagnitude{M}
+    size::EventMagnitude{M}
     depth::Depth{T3,U3}
 end
 
@@ -44,7 +62,7 @@ mutable struct ArbitraryPoint <: AbstractLLPoint
     time::Union{TemporalCoordinate,Nothing}
     lat::Union{Latitude,Nothing}
     lon::Union{Longitude,Nothing}
-    mag::Union{EventMagnitude,Nothing}
+    size::Union{EventPointSize,Nothing}
     depth::Union{Depth,Nothing}
 end
 
