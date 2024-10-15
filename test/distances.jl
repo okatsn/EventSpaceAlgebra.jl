@@ -92,4 +92,41 @@ end
 
     # Test Zero Distance
     @test isapprox(norm(ENU(ArbitraryPoint(latlon(34.000000, -118.000000)..., Depth(10)), ArbitraryPoint(latlon(34.000000, -118.000000)..., Depth(10)))), 0.0)
+
+
+    @test isapprox(
+        norm(ENU(ArbitraryPoint(latlon(34.0, -118.0)..., Depth(0)),
+            ArbitraryPoint(latlon(34.1800, -118.0)..., Depth(0)))),
+        20000, # approximately 20 km (ChatGPT's answer)
+        atol=1000)
+
+    # # Test Points Near the Poles and Equator
+    # Answer from: # https://www.thoughtco.com/degree-of-latitude-and-longitude-distance-4070616
+
+    # What Is the Distance Between Degrees of Latitude?
+    @test isapprox(
+        norm(ENU(ArbitraryPoint(latlon(0.5, 0.0)..., Depth(0)),
+                ArbitraryPoint(latlon(-0.5, 0.0)..., Depth(0))), 2),
+        110_567,
+        atol=10) # error: ≤ 10 meters
+
+    @test isapprox(
+        norm(ENU(ArbitraryPoint(latlon(90, 0.0)..., Depth(0)),
+                ArbitraryPoint(latlon(89, 0.0)..., Depth(0))), 2),
+        111_699,
+        atol=10) # error: ≤ 10 meters
+
+    # What Is the Distance Between Degrees of Longitude?
+    @test isapprox(
+        norm(ENU(ArbitraryPoint(latlon(0.0, 0.0)..., Depth(0)),
+                ArbitraryPoint(latlon(0.0, 1.0)..., Depth(0))), 2),
+        111_321,
+        atol=10) # error: ≤ 10 meters
+
+    @test isapprox(
+        norm(ENU(ArbitraryPoint(latlon(40.0, 0.0)..., Depth(0)),
+                ArbitraryPoint(latlon(40.0, 1.0)..., Depth(0))), 2),
+        85_000,
+        atol=500) # error: ≤ 10 meters
+
 end
