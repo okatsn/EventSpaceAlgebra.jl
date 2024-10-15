@@ -50,5 +50,14 @@ end
 end
 
 
-
+@testset "Distance ENU v.s. Haversine" begin
+    kaohsiung = (Latitude(22.625109u"°"), Longitude(120.308952u"°"))
+    taipei = (Latitude(25.091076u"°"), Longitude(121.559837u"°"))
+    pt1 = ArbitraryPoint(kaohsiung..., Depth(0u"km"))
+    pt2 = ArbitraryPoint(taipei..., Depth(0u"km"))
+    @test haversine(taipei, kaohsiung) == haversine(pt1, pt2) == haversine(pt2, pt1)
+    @test abs(
+        haversine(pt2, pt1) -
+        sqrt(sum(ENU(pt1, pt2) .^ 2))
+    ) ≤ 2000 # error below 2000 meters
 end

@@ -44,7 +44,7 @@ export EventPoint, ArbitraryPoint, shift!
 using Distances, Geodesy
 include("distances.jl")
 export haversine
-export LLA, ECEF
+export LLA, ECEF, ENU
 
 
 
