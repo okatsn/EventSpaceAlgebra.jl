@@ -5,7 +5,7 @@ function Distances.haversine(t1::T, t2::T, radius::Number=EARTH_RADIUS.val) wher
         getproperty.(t1, :value), # Longitude
         getproperty.(t2, :value), # Latitude; # Please refer the source code haversine.jl of package `Distances.jl`.
         radius
-    ) * u"m"
+    )
 end
 
 function Distances.haversine(t1::T, t2::T, radius::Number=EARTH_RADIUS.val) where {T<:Tuple{Latitude,Longitude}}
@@ -30,6 +30,9 @@ function Distances.haversine(p1::AbstractLLPoint, p2::AbstractLLPoint, radius::N
     )
 end
 
+"""
+Returns with `Unitful.unit`.
+"""
 function haversine_distance(lat1::Latitude{U}, lon1::Longitude{U},
     lat2::Latitude{U}, lon2::Longitude{U}) where {U}
 

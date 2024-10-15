@@ -8,14 +8,14 @@
     sydney = (Latitude(-33.93375129186233u"°"), Longitude(151.17818184069466u"°"))
 
     # # Test for examples
-    @test isapprox(haversine(swami_vivekananda, wagle_estate), 1.6863533312765095u"km")
-    @test isapprox(haversine(taipei, kaohsiung), 302.26604153u"km")
-    @test isapprox(haversine(london, sydney), 17019.4532353u"km")
+    @test isapprox(haversine(swami_vivekananda, wagle_estate) * u"m", 1.6863533312765095u"km")
+    @test isapprox(haversine(taipei, kaohsiung) * u"m", 302.26604153u"km")
+    @test isapprox(haversine(london, sydney) * u"m", 17019.4532353u"km")
 
     # # Test reversed input order
-    @test isapprox(haversine(reverse(swami_vivekananda), reverse(wagle_estate)), 1.6863533312765095u"km")
-    @test isapprox(haversine(reverse(taipei), reverse(kaohsiung)), 302.26604153u"km")
-    @test isapprox(haversine(reverse(london), reverse(sydney)), 17019.4532353u"km")
+    @test isapprox(haversine(reverse(swami_vivekananda), reverse(wagle_estate)) * u"m", 1.6863533312765095u"km")
+    @test isapprox(haversine(reverse(taipei), reverse(kaohsiung)) * u"m", 302.26604153u"km")
+    @test isapprox(haversine(reverse(london), reverse(sydney)) * u"m", 17019.4532353u"km")
 
 
     # #
@@ -25,7 +25,7 @@
     # # Comparison between haversine_distance
     location_pairs = [((Latitude(rand(-90:90) * u"°"), Longitude(rand(-180:180) * u"°")), (Latitude(rand(-90:90) * u"°"), Longitude(rand(-180:180) * u"°"))) for i = 1:20]
     for (l1, l2) in location_pairs
-        @test isapprox(haversine(l1, l2), EventSpaceAlgebra.haversine_distance(l1, l2))
+        @test isapprox(haversine(l1, l2) * u"m", EventSpaceAlgebra.haversine_distance(l1, l2))
     end
 
 end
