@@ -1,20 +1,34 @@
-function Distances.haversine(t1::T, t2::T) where {T<:Tuple{<:Longitude,<:Latitude}}
+const EARTH_RADIUS = 6371_000u"m"  # Mean Earth radius in meters
+
+function Distances.haversine(t1::T, t2::T, radius::Number=EARTH_RADIUS.val) where {T<:Tuple{Longitude,Latitude}}
     haversine(
         getproperty.(t1, :value), # Longitude
-        getproperty.(t2, :value) # Latitude; # Please refer the source code haversine.jl of package `Distances.jl`.
+        getproperty.(t2, :value), # Latitude; # Please refer the source code haversine.jl of package `Distances.jl`.
+        radius
     ) * u"m"
 end
 
-function Distances.haversine(t1::T, t2::T) where {T<:Tuple{<:Latitude,<:Longitude}}
+function Distances.haversine(t1::T, t2::T, radius::Number=EARTH_RADIUS.val) where {T<:Tuple{Latitude,Longitude}}
     (lat1, lon1) = t1
     (lat2, lon2) = t2
     haversine(
         (lon1, lat1),
-        (lon2, lat2)
+        (lon2, lat2),
+        radius
     )
 end
 
-const EARTH_RADIUS = 6371.0u"km"  # Mean Earth radius in kilometers
+"""
+`Distances.haversine(p1::AbstractLLPoint, p2::AbstractLLPoint, radius::Number=EARTH_RADIUS.val)`
+calculates Haversine distance ignoring depth.
+"""
+function Distances.haversine(p1::AbstractLLPoint, p2::AbstractLLPoint, radius::Number=EARTH_RADIUS.val)
+    haversine(
+        (p1.lat, p1.lon),
+        (p2.lat, p2.lon),
+        radius
+    )
+end
 
 function haversine_distance(lat1::Latitude{U}, lon1::Longitude{U},
     lat2::Latitude{U}, lon2::Longitude{U}) where {U}

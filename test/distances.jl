@@ -18,6 +18,9 @@
     @test isapprox(haversine(reverse(london), reverse(sydney)), 17019.4532353u"km")
 
 
+    # #
+    @test haversine(taipei, kaohsiung) == haversine(kaohsiung, taipei)
+    @test haversine(taipei, kaohsiung, 6370_000) == haversine(kaohsiung, taipei, 6370_000)
 
     # # Comparison between haversine_distance
     location_pairs = [((Latitude(rand(-90:90) * u"°"), Longitude(rand(-180:180) * u"°")), (Latitude(rand(-90:90) * u"°"), Longitude(rand(-180:180) * u"°"))) for i = 1:20]
@@ -44,6 +47,7 @@ end
 
     @test ENU(lla0, lla1, wgs84) == ENU(pt0, pt1)
     @test isapprox(ENU(pt0, pt1), ENU(0, 0, 1000))
+end
 
 
 
