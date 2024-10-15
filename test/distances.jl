@@ -74,7 +74,7 @@ end
 
     @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters
     @test isapprox(norm(enu1, 2), 1948.8, atol=1) # google earth's distance
-
+    @test isapprox(norm(ENU(ArbitraryPoint(taipei101..., Depth(0u"m")), ArbitraryPoint(taipei101..., Depth(-508u"m")))), 508)
 
     half_perimeter = haversine(ArbitraryPoint(taipei101..., Depth(0u"km")), ArbitraryPoint(the_other_side..., Depth(0u"km")))
     @test isapprox(half_perimeter, EARTH_RADIUS.val * π, atol=1)
