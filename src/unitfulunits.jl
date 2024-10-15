@@ -62,3 +62,30 @@ To dispatch by this unit, please use e.g., `typeof(jd)`.
 
 # @affineunit d_epoch "d_epoch" Dates.datetime2julian(epochms0) * jd
 # @affineunit ms_epoch "ms_epoch" Dates.datetime2julian(epochms0) * jd
+
+
+# # todo: °N, °S, °E, °W for Longitude/Latitude; see the following concerns:
+# - This is not necessary, since currently +/- with struct Longitude/Latitude is complete.
+# - You have to prohibit comparison between u"°" and u"°N", that is, for example, for `1u"°N" == 1u"°"` shouldn't return `true`.
+# - Also prohibit `uconvert` between between u"°" and u"°N".
+# - This may also involves normalization (e.g., Latitude of -10° => 10°S; 110° => 70°N)
+# - This will involve redefinition in `EventAngleDegree{T}` and thus `Longitude{T}`
+
+@unit deg_N "°N" DegreeNorth 1 * u"°" false
+@unit deg_E "°E" DegreeEast 1 * u"°" false
+@unit dep_km "dep_km" DepthKM 1 * u"km" false
+
+const PointShiftingUnits = Union{
+    Quantity{<:Any,<:Any,typeof(deg_N)},
+    Quantity{<:Any,<:Any,typeof(deg_E)},
+    Quantity{<:Any,<:Any,typeof(dep_km)}
+}
+
+
+struct UnitIncompatible <: CustomError
+    msg::String
+end
+UnitIncompatible() = UnitIncompatible("Direct operation with `PointShiftingUnits` (deg_N, deg_E, dep_km) is intended to not compatible with `EventCoordinate` (Latitude, Longitude, Depth).")
+Base.showerror(io::IO, e::UnitIncompatible) = print(io, e.msg)
+# To use:
+# throw(UnitIncompatible("Direct o peration with these units (deg_N, deg_E, dep_km) is intended to not compatible with EventCoordinate (Latitude, Longitude, Depth)."))

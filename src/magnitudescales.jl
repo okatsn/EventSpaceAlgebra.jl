@@ -1,9 +1,16 @@
-abstract type AbstractMagnitudeScale end
+abstract type AnySizeScale end
+abstract type MagnitudeScale <: AnySizeScale end
 
-struct MomentMagnitude <: AbstractMagnitudeScale end   # Mw
-struct RichterMagnitude <: AbstractMagnitudeScale end  # ML
-struct SurfaceWaveMagnitude <: AbstractMagnitudeScale end  # MS
+struct MomentMagnitude <: MagnitudeScale end   # Mw
+struct RichterMagnitude <: MagnitudeScale end  # ML
+struct SurfaceWaveMagnitude <: MagnitudeScale end  # MS
 
-struct EventMagnitude{M<:AbstractMagnitudeScale}
+abstract type EventPointSize end
+
+struct EventMagnitude{M<:MagnitudeScale} <: EventPointSize
+    value::Float64
+end
+
+struct ArbitraryPointSize{M<:AnySizeScale} <: EventPointSize
     value::Float64
 end

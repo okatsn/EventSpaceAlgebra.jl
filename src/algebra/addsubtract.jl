@@ -78,3 +78,8 @@ end
 # function Base.:-(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
 #     Longitude{U}(lon.value - delta)
 # end
+
+
+# for op in (:+, :-)
+
+# end
