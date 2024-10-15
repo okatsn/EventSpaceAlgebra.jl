@@ -16,7 +16,7 @@ export EventTime, EventTimeJD, EventTimeMS
 export EventCoordinate
 
 include("spatial.jl")
-export Longitude, Latitude
+export Longitude, Latitude, latlon
 export Depth
 
 include("uconvert.jl")
@@ -43,6 +43,7 @@ export EventPoint, ArbitraryPoint, shift!
 
 using Distances, Geodesy
 include("distances.jl")
+export EARTH_RADIUS
 export haversine
 export LLA, ECEF, ENU
 

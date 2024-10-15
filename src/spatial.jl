@@ -90,8 +90,10 @@ end
 # - Since Latitude and Longitude can only be degree or rad within a fixed range, only helper function for converting arbitrary degree (radian) to the ±90°/±180° (±0.5π/±π) is required, and it is no need to define specific units like `ms_epoch` and `jd`, such as `@unit lon "lon" Longitude 1u"°" false` or `@unit lat "lat" Latitude 1u"°" false`
 
 
-
-
+"""
+`latlon(lat, lon) = Latitude(lat * u"°"), Longitude(lon * u"°")`
+"""
+latlon(lat, lon) = Latitude(lat * u"°"), Longitude(lon * u"°")
 
 
 

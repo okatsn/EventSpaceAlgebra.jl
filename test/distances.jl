@@ -51,13 +51,45 @@ end
 
 
 @testset "Distance ENU v.s. Haversine" begin
+    using LinearAlgebra
     kaohsiung = (Latitude(22.625109u"°"), Longitude(120.308952u"°"))
     taipei = (Latitude(25.091076u"°"), Longitude(121.559837u"°"))
     pt1 = ArbitraryPoint(kaohsiung..., Depth(0u"km"))
     pt2 = ArbitraryPoint(taipei..., Depth(0u"km"))
     @test haversine(taipei, kaohsiung) == haversine(pt1, pt2) == haversine(pt2, pt1)
+    enu0 = ENU(pt1, pt2)
     @test abs(
         haversine(pt2, pt1) -
-        sqrt(sum(ENU(pt1, pt2) .^ 2))
+        sqrt(sum(enu0 .^ 2))
     ) ≤ 2000 # error below 2000 meters
+
+    @test sqrt(sum(enu0 .^ 2)) == norm(enu0, 2)
+
+    taipei101 = latlon(25.033044612802325, 121.56273533595018)
+    the_other_side = latlon(-25.033045, -58.437265)
+
+    daan = latlon(25.033287104794507, 121.54342755567457)
+
+    enu1 = ENU(ArbitraryPoint(taipei101..., Depth(0u"km")), ArbitraryPoint(daan..., Depth(0u"km")))
+
+    @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters
+    @test isapprox(norm(enu1, 2), 1948.8, atol=1) # google earth's distance
+
+
+    half_perimeter = haversine(ArbitraryPoint(taipei101..., Depth(0u"km")), ArbitraryPoint(the_other_side..., Depth(0u"km")))
+    @test isapprox(half_perimeter, EARTH_RADIUS.val * π, atol=1)
+
+
+    @test isapprox(
+        norm(
+            ENU(
+                ArbitraryPoint(latlon(34.000000, -118.000000)..., Depth(10)),
+                ArbitraryPoint(latlon(34.000100, -118.000100)..., Depth(10)
+                )
+            ),
+        ), 14.2, # ChatGPT's answer.
+        atol=0.3)
+
+    # Test Zero Distance
+    @test isapprox(norm(ENU(ArbitraryPoint(latlon(34.000000, -118.000000)..., Depth(10)), ArbitraryPoint(latlon(34.000000, -118.000000)..., Depth(10)))), 0.0)
 end

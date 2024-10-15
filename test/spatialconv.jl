@@ -15,6 +15,8 @@
     @test isapprox(Longitude(3.14159265359u"rad"), Longitude(180u"°"))
     @test isapprox(Latitude(3.14159265359u"rad"), Latitude(180u"°"))
 
+    @test (Latitude(180u"°"), Longitude(18u"°")) == latlon(180, 18)
+
     # Temporal
     @test EventSpaceAlgebra.epochms0 == DateTime(0000, 1, 1)
     @test EventTimeMS(0.0) == uconvert(ms_epoch, EventTimeJD(EventSpaceAlgebra.epochms0))
