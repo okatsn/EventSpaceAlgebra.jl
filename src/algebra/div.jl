@@ -20,6 +20,6 @@ end
 
 latlon_normalize(x) = x
 
-function Base.:/(a::AngularCoordinate, b::Int)
-    /(latlon_normalize(a).value, b)
-end # Normalize before division. This allows `mean`.
+function Statistics.mean(v::Vector{T}) where {T<:AngularCoordinate}
+    mean(getproperty.(latlon_normalize.(v), :value))
+end

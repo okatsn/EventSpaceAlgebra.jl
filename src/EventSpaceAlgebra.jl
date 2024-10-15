@@ -26,6 +26,8 @@ include("timespacetypes.jl")
 # include("algebra/sameunit.jl")
 include("algebra/comparisonop.jl")
 include("algebra/addsubtract.jl")
+
+using Statistics
 include("algebra/div.jl")
 export latlon_normalize
 # export Longitude, Latitude, EventTime, JulianDay
