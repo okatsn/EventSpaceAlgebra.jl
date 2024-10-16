@@ -14,6 +14,10 @@ function Base.:/(a::EventCoordinate, b::Real)
     TemporaryHolder3{wrapper_type(a)}(/(a.value, b))
 end
 
+function Base.:/(a::TemporaryHolder3{T}, b::Real) where {T}
+    TemporaryHolder3{T}(/(a.value, b))
+end
+
 for AC in (:Latitude, :Longitude, :Depth)
     @eval function Base.:+(a::$AC, b::$AC)
         TemporaryHolder3{wrapper_type(a)}(+(a.value, b.value))

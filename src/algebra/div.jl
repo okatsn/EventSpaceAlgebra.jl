@@ -19,7 +19,3 @@ function latlon_normalize(lon::Longitude{U}) where {U}
 end
 
 latlon_normalize(x) = x
-
-function Statistics.mean(v::Vector{T}) where {T<:AngularCoordinate}
-    mean(getproperty.(latlon_normalize.(v), :value))
-end
