@@ -30,7 +30,7 @@ end
 for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
     @eval begin
         function Base.$op(t1::$AC, t2::Unitful.AbstractQuantity)
-            $AC($op(t1.value, t2))
+            $op(t1.value, t2)
         end
         # only `Longitude/Latitude` needs unit conversion if t2 is of unit radian.
         if $AC in (:Longitude, :Latitude)
@@ -46,6 +46,7 @@ end
 # KEYNOTE: Be aware that Unitful.AbstractQuantity <: Number
 const NonEventQuantities = Union{Dates.AbstractTime,Unitful.AbstractQuantity}
 
+# Commutative property
 function Base.:+(t1::NonEventQuantities, t2::EventCoordinate)
     +(t2, t1)
 end

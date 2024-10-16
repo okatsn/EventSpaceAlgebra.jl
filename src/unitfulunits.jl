@@ -75,12 +75,10 @@ To dispatch by this unit, please use e.g., `typeof(jd)`.
 @unit deg_E "°E" DegreeEast 1 * u"°" false
 @unit dep_km "dep_km" DepthKM 1 * u"km" false
 
-const PointShiftingUnits = Union{
-    Quantity{<:Any,<:Any,typeof(deg_N)},
-    Quantity{<:Any,<:Any,typeof(deg_E)},
-    Quantity{<:Any,<:Any,typeof(dep_km)}
-}
 
+
+const PointShiftingUnits = Union{typeof(deg_N),typeof(deg_E),typeof(dep_km)}
+const PointShiftingUnitQuantity = Quantity{T,D,<:PointShiftingUnits} where {T,D}
 
 struct UnitIncompatible <: CustomError
     msg::String
