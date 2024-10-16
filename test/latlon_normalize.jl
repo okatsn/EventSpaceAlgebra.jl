@@ -47,15 +47,25 @@ end
         Depth(5u"km") + Depth(1u"m"),
         Longitude(-10u"°") + Longitude(20u"°"),
         Latitude(-10u"°") + Latitude(20u"°"),
+        Latitude(-10u"°") + Latitude(20u"°") + Latitude(7.0u"°"),
     ]
     wrong_answers = [
         Depth(5001u"m"),
         Longitude(10u"°"),
         Latitude(10u"°"),
+        Latitude(17.0u"°")
     ]
     for (r1, wa1) in zip(results, wrong_answers)
         @test r1 != wa1 # Depth + Depth is non-sense to be Depth, but
         @test r1.value == wa1.value # the quantity in side is the same.
     end
 
+
+    th = Latitude(-10u"°") + Latitude(20u"°")
+    @test_throws MethodError th + Longitude(20u"°")
+    @test_throws MethodError th + Depth(20u"m")
+
+    # # test commutative property of +
+    @test th + Latitude(2.0u"°") == Latitude(2.0u"°") + th
+    @test (Latitude(2.0u"°") + th).value == 12.0u"°"
 end

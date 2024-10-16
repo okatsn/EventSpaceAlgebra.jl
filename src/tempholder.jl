@@ -19,3 +19,9 @@ for AC in (:Latitude, :Longitude, :Depth)
         TemporaryHolder3{wrapper_type(a)}(+(a.value, b.value))
     end
 end
+
+function Base.:+(a::TemporaryHolder3{T}, b::T) where {T}
+    typeof(a)(a.value + b.value)
+end
+
+Base.:+(a::T, b::TemporaryHolder3{T}) where {T} = b + a
