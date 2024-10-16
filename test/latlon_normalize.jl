@@ -76,7 +76,7 @@ end
     @test (Latitude(2.0u"°") + th).value == 12.0u"°"
 end
 
-@testset "Mean of EventCoordinate" begin
+@testset "Mean and Standard Deviation of EventCoordinate" begin
     using Statistics
     v = [-5, 12, 33.5, 78.2, 99.8, 150.0, 190, 270, 360, 420, -32 / 3]
     vdeg = v .* u"°"
@@ -88,4 +88,7 @@ end
     @test mean(v) == mean(vlat).value.val
     @test mean(v) == mean(vlon).value.val
     @test mean(v) == mean(vdep).value.val
+    @test std(v) == std(vlat).val
+    @test std(v) == std(vlon).val
+    @test std(v) == std(vdep).val
 end

@@ -18,6 +18,16 @@ function Base.:/(a::TemporaryHolder3{T}, b::Real) where {T}
     TemporaryHolder3{T}(/(a.value, b))
 end
 
+function Base.:-(a::TemporaryHolder3{T}, b::T) where {T}
+    a.value - b.value
+end
+
+function Base.:-(a::T, b::TemporaryHolder3{T}) where {T}
+    a.value - b.value
+end
+
+
+
 for AC in (:Latitude, :Longitude, :Depth)
     @eval function Base.:+(a::$AC, b::$AC)
         TemporaryHolder3{wrapper_type(a)}(+(a.value, b.value))
