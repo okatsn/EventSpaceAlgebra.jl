@@ -46,15 +46,17 @@ end
     @test Longitude(5.0u"°") - Longitude(1u"°") == 4.0u"°"
     @test Latitude(5u"°") - Latitude(1u"°") == 4u"°"
     @test Latitude(5.0u"°") - Latitude(1u"°") == 4.0u"°"
-    @test_throws MethodError Longitude(5u"°") + Longitude(1u"°")
-    @test_throws MethodError Latitude(5u"°") + Latitude(1u"°")
     @test_throws MethodError Longitude(5u"°") - Latitude(1u"°")
     @test_throws MethodError Latitude(5u"°") - Longitude(1u"°")
+    @test_throws MethodError Longitude(5u"°") + Latitude(1u"°")
+    @test_throws MethodError Latitude(5u"°") + Longitude(1u"°")
+    @test_throws MethodError Longitude(5u"°") + Depth(1)
+    @test_throws MethodError Latitude(5u"°") + Depth(1)
 
     # Coordinate of different type should not be subtractable
     @test Depth(5u"m") - Depth(1u"m") == 4u"m"
     @test Depth(5.0u"m") - Depth(1u"m") == 4.0u"m"
-    @test_throws MethodError Depth(5u"m") + Depth(1u"m")
+
 
     # `+` and `-` methods on spatial coordinates with quantity.
     @test 50u"m" + Depth(5u"km") == Depth(5u"km") + 50u"m" == Depth(5050u"m")

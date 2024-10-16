@@ -19,6 +19,10 @@ include("spatial.jl")
 export Longitude, Latitude, latlon
 export Depth
 
+# TemporaryHolder for (:Latitude, :Longitude, :Depth, :EventTime) defined above
+include("tempholder.jl")
+
+
 include("uconvert.jl")
 export uconvert
 
@@ -31,6 +35,8 @@ using Statistics
 include("algebra/div.jl")
 export latlon_normalize
 # export Longitude, Latitude, EventTime, JulianDay
+
+
 
 using Dates
 include("datetimeconv.jl")
