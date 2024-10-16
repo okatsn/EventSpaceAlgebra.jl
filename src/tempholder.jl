@@ -21,7 +21,11 @@ for AC in (:Latitude, :Longitude, :Depth)
 end
 
 function Base.:+(a::TemporaryHolder3{T}, b::T) where {T}
-    typeof(a)(a.value + b.value)
+    TemporaryHolder3{T}(a.value + b.value)
 end
 
 Base.:+(a::T, b::TemporaryHolder3{T}) where {T} = b + a
+
+function Base.:+(a::TemporaryHolder3{T}, b::TemporaryHolder3{T}) where {T}
+    TemporaryHolder3{T}(a.value + b.value)
+end

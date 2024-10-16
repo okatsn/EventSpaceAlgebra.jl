@@ -64,6 +64,7 @@ end
     th = Latitude(-10u"°") + Latitude(20u"°")
     @test_throws MethodError th + Longitude(20u"°")
     @test_throws MethodError th + Depth(20u"m")
+    @test (th + th).value == 20u"°"
 
     # # test commutative property of +
     @test th + Latitude(2.0u"°") == Latitude(2.0u"°") + th
