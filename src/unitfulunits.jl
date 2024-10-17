@@ -33,7 +33,7 @@ julia> uconvert(u"jd", 0u"d").val == EventSpaceAlgebra.epoch_julian_diff_d # whi
 true
 ```
 """
-@unit d_abs "d_abs" AbsoluteDay 1 * u"d" false
+@unit d_epoch "d_epoch" AbsoluteDay 1 * u"d" false
 
 #
 """
@@ -57,7 +57,7 @@ true
 Absolute time stamp unit Julian Day (of each day fixed to the length 86400 seconds).
 To dispatch by this unit, please use e.g., `typeof(jd)`.
 """
-@affineunit jd "jd" -epoch_julian_diff_d * d_abs
+@affineunit jd "jd" -epoch_julian_diff_d * d_epoch
 # @unit jd "jd" JulianDay 86400u"s" false  # 1 Julian day = 86400 seconds
 
 # @affineunit d_epoch "d_epoch" Dates.datetime2julian(epochms0) * jd

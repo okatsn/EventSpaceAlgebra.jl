@@ -26,6 +26,7 @@ true
 julia> typeof(1u"rad") <: EventSpaceAlgebra.EventAngleDegree
 false
 ```
+
 You can define `$fnname` with `u"rad"`, but it will be converted to the unit of degree.
 It should be noted that input with any other dimensionless quantities is intended to trigger an error, for example such as `u"m/m"`, because we cannot guarantee whether a dimensionless unit like `u"m/m"` is derived to be the quantity of radian, or something else.
 
@@ -44,6 +45,11 @@ true
 julia> Longitude(0.5*π*u"m/m")
 ERROR: MethodError: no method matching Longitude(::Float64)
 
+julia> longitude(0.5*π*u"m/m"; unit=u"rad") == Longitude(0.5*π*u"rad")
+true
+
+julia> longitude(10) == Longitude(10u"°")
+true
 ```
 
 
@@ -97,7 +103,8 @@ latlon(lat, lon) = Latitude(lat * u"°"), Longitude(lon * u"°")
 
 
 
-
+latitude(n::Real, unit=u"°") = Latitude(n * unit)
+longitude(n::Real, unit=u"°") = Longitude(n * unit)
 
 
 

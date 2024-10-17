@@ -16,7 +16,7 @@ export EventTime, EventTimeJD, EventTimeMS
 export EventCoordinate
 
 include("spatial.jl")
-export Longitude, Latitude, latlon
+export Longitude, Latitude, latlon, latitude, longitude
 export Depth
 
 # Division and Multiplication operators

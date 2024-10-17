@@ -41,4 +41,13 @@
     b = last.(evtpairs) .+ Day(1)
     @test a != b
     @test all(a .!= b)
+
+    # Test default behavior
+    for n in [-13.5, -1, 0.1, 1, 50, 90, 180]
+        @test longitude(n) != Longitude(n * u"rad")
+        @test longitude(n) == Longitude(n * u"°")
+        @test latitude(n) != Latitude(n * u"rad")
+        @test latitude(n) == Latitude(n * u"°")
+    end
+
 end

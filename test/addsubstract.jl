@@ -41,7 +41,23 @@ end
     @test EventTimeJD(5) + 86400u"s" == EventTimeJD(6)
     @test EventTimeJD(5) - 86400u"s" == EventTimeJD(4)
 
+    @test EventTimeJD.(1:2) |> diff |> only == EventTimeJD(2) - EventTimeJD(1)
+    @test EventTimeJD(2) - EventTimeJD(1) == 1u"d" == 1u"d_epoch"
+    @test EventTimeMS.(1:2) |> diff |> only == EventTimeMS(2) - EventTimeMS(1)
+    @test EventTimeMS(2) - EventTimeMS(1) == 1u"ms" == 1u"ms_epoch"
+
+
     # # Spatial
+
+    @test Depth.(1:2) |> diff |> only == Depth(2) - Depth(1)
+    @test Depth(2) - Depth(1) == 1u"km"
+    @test latitude.(1:2) |> diff |> only == latitude(2) - latitude(1)
+    @test latitude(2) - latitude(1) == 1u"°"
+
+    @test longitude.(1:2) |> diff |> only == longitude(2) - longitude(1)
+    @test longitude(2) - longitude(1) == 1u"°"
+
+
     @test Longitude(5u"°") - Longitude(1u"°") == 4u"°"
     @test Longitude(5.0u"°") - Longitude(1u"°") == 4.0u"°"
     @test Latitude(5u"°") - Latitude(1u"°") == 4u"°"
