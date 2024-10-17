@@ -103,8 +103,8 @@ latlon(lat, lon) = Latitude(lat * u"°"), Longitude(lon * u"°")
 
 
 
-latitude(n::Real, unit=u"°") = Latitude(n * unit)
-longitude(n::Real, unit=u"°") = Longitude(n * unit)
+latitude(n::Real; unit=u"°") = Latitude(n * unit)
+longitude(n::Real; unit=u"°") = Longitude(n * unit)
 
 
 
