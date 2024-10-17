@@ -35,13 +35,9 @@ end
 
 @testset "Operation with TemporaryHolder" begin
     # # test where {T<:EventCoordinate}
-    # @test_throws TypeError EventSpaceAlgebra.TemporaryHolder3{Int}(5u"m")
-    # @test_throws TypeError EventSpaceAlgebra.TemporaryHolder3{Any}(5u"m")
-
-    # # To revise
-    # @test_throws MethodError Depth(5u"m") + Depth(1u"m")
-    # @test_throws MethodError Longitude(5u"°") + Longitude(1u"°")
-    # @test_throws MethodError Latitude(5u"°") + Latitude(1u"°")
+    @test Depth(5u"m") + Depth(1u"m") == 6u"m"
+    @test Longitude(5u"°") + Longitude(1u"°") == 6u"°"
+    @test Latitude(5u"°") + Latitude(1u"°") == 6u"°"
     @test Latitude(-10u"°") + Latitude(-10u"°") + Latitude(-10u"°") == 3 * Latitude(-10u"°")
     results = [
         Depth(5u"km") + Depth(1u"m"),

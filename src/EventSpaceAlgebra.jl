@@ -19,8 +19,8 @@ include("spatial.jl")
 export Longitude, Latitude, latlon
 export Depth
 
-# TemporaryHolder for (:Latitude, :Longitude, :Depth, :EventTime) defined above
-include("tempholder.jl")
+# Division and Multiplication operators
+include("divmultiple.jl")
 
 
 include("uconvert.jl")
@@ -32,7 +32,7 @@ include("algebra/comparisonop.jl")
 include("algebra/addsubtract.jl")
 
 using Statistics
-include("algebra/div.jl")
+include("latlon_normalize.jl")
 export latlon_normalize
 # export Longitude, Latitude, EventTime, JulianDay
 

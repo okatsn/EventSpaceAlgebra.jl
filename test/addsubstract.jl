@@ -69,13 +69,11 @@ end
     @test (1 // 2) * π * u"rad" + Latitude(0u"°") == Latitude(0u"°") + (1 // 2) * π * u"rad" == 90u"°"
     @test Longitude(180 * u"°") - (1 // 2) * π * u"rad" == 90u"°"
     @test Latitude(90u"°") - (1 // 2) * π * u"rad" == 0u"°"
-    # TODO: Longitude over 180°, Latitude for over 90° are not tested yet.
 
     # # It is intended that deg_E/N is designed to be not compatible with Longitude/Latitude.
-    # Must to fail if the dimension is different:
+    # Designed to make code to be easily maintainable and avoid ambiguity:
     @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_N"
     @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_E"
-    # Designed to make code to be easily maintainable and avoid ambiguity:
     @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
     @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
     @test_throws UnitIncompatible Longitude(32u"°") - 8u"deg_E" == Longitude(24u"°")
