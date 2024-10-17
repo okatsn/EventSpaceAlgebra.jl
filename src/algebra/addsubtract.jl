@@ -46,9 +46,15 @@ end
 # KEYNOTE: Be aware that Unitful.AbstractQuantity <: Number
 const NonEventQuantities = Union{Dates.AbstractTime,Unitful.AbstractQuantity}
 
-# Commutative property
+# # Commutative property for `+`
 function Base.:+(t1::NonEventQuantities, t2::EventCoordinate)
     +(t2, t1)
+end
+
+for AC in (:Latitude, :Longitude, :Depth)
+    @eval function Base.:+(a::$AC, b::$AC)
+        +(a.value, b.value)
+    end
 end
 
 # # Postponed because of there is no immediate necessity.

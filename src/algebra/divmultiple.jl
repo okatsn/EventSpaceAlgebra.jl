@@ -36,11 +36,6 @@ function Base.:*(a::EventCoordinate, b::Real)
     *(a.value, b)
 end
 
+# # Commutative property for `+`
+
 Base.:*(a::Real, b::EventCoordinate) = b * a
-
-
-for AC in (:Latitude, :Longitude, :Depth)
-    @eval function Base.:+(a::$AC, b::$AC)
-        +(a.value, b.value)
-    end
-end

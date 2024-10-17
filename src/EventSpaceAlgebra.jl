@@ -20,7 +20,7 @@ export Longitude, Latitude, latlon
 export Depth
 
 # Division and Multiplication operators
-include("divmultiple.jl")
+include("algebra/divmultiple.jl")
 
 
 include("uconvert.jl")
