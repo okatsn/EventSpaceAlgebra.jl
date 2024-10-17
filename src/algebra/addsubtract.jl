@@ -22,25 +22,15 @@ function Base.:+(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U
     EventTime{T,U}(t1.value + Quantity(Δt))
 end
 
-# Ensure the commutative property:
-Base.:+(Δt::Dates.AbstractTime, t1::EventTime) = t1 + Δt
-function Base.:+(t1::Quantity, t2::EventTime{T,U}) where {T} where {U}
-    EventTime{T,U}(t2.value + t1)
-end
+
 
 # # Spatial Coordinate
 # Must convert to degree before operation, because something like `2 * π * u"rad" + 1u"°"` returns Float64.
 
 for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
     @eval begin
-        function Base.$op(t1::$AC, t2)
-            $AC($op(t1.value, t2))
-        end
-        # only `+` is commutative.
-        if $op == + # Noted that it shouldn't be `== :+`
-            function Base.$op(t1, t2::$AC)
-                $op(t2, t1)
-            end
+        function Base.$op(t1::$AC, t2::Unitful.AbstractQuantity)
+            $op(t1.value, t2)
         end
         # only `Longitude/Latitude` needs unit conversion if t2 is of unit radian.
         if $AC in (:Longitude, :Latitude)
@@ -52,6 +42,14 @@ for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
     end
 end
 
+# # Ensure the commutative property:
+# KEYNOTE: Be aware that Unitful.AbstractQuantity <: Number
+const NonEventQuantities = Union{Dates.AbstractTime,Unitful.AbstractQuantity}
+
+# Commutative property
+function Base.:+(t1::NonEventQuantities, t2::EventCoordinate)
+    +(t2, t1)
+end
 
 # # Postponed because of there is no immediate necessity.
 # - "+" functions for eventTime scale with duration.

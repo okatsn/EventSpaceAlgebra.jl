@@ -98,24 +98,7 @@ latlon(lat, lon) = Latitude(lat * u"°"), Longitude(lon * u"°")
 
 
 
-# # FIXME: Should I need to normalize lon lat? Or should I check whether longitude and latitude are legal?
-# # Normalize latitude to -90° to +90°
-# function normalize(lat::Latitude{U}) where {U}
-#     value_in_deg = uconvert(u"°", lat.value).val
-#     if value_in_deg > 90
-#         value_in_deg = 180 - value_in_deg
-#     elseif value_in_deg < -90
-#         value_in_deg = -180 - value_in_deg
-#     end
-#     Latitude(value_in_deg)
-# end
 
-# # Normalize longitude to -180° to +180°
-# function normalize(lon::Longitude{U}) where {U}
-#     value_in_deg = uconvert(u"°", lon.value).val
-#     value_in_deg = mod(value_in_deg + 180, 360) - 180
-#     Longitude(value_in_deg)
-# end
 
 
 struct Depth{T,U} <: DepthCoordinate

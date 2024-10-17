@@ -46,33 +46,35 @@ end
     @test Longitude(5.0u"°") - Longitude(1u"°") == 4.0u"°"
     @test Latitude(5u"°") - Latitude(1u"°") == 4u"°"
     @test Latitude(5.0u"°") - Latitude(1u"°") == 4.0u"°"
-    @test_throws MethodError Longitude(5u"°") + Longitude(1u"°")
-    @test_throws MethodError Latitude(5u"°") + Latitude(1u"°")
     @test_throws MethodError Longitude(5u"°") - Latitude(1u"°")
     @test_throws MethodError Latitude(5u"°") - Longitude(1u"°")
+    @test_throws MethodError Longitude(5u"°") + Latitude(1u"°")
+    @test_throws MethodError Latitude(5u"°") + Longitude(1u"°")
+    @test_throws MethodError Longitude(5u"°") + Depth(1)
+    @test_throws MethodError Latitude(5u"°") + Depth(1)
 
     # Coordinate of different type should not be subtractable
     @test Depth(5u"m") - Depth(1u"m") == 4u"m"
     @test Depth(5.0u"m") - Depth(1u"m") == 4.0u"m"
-    @test_throws MethodError Depth(5u"m") + Depth(1u"m")
+
 
     # `+` and `-` methods on spatial coordinates with quantity.
-    @test 50u"m" + Depth(5u"km") == Depth(5u"km") + 50u"m" == Depth(5050u"m")
-    @test Depth(5u"km") - 50u"m" == Depth(4950u"m")
-    @test 10u"°" + Longitude(20u"°") == Longitude(20u"°") + 10u"°" == Longitude(30u"°")
-    @test 10u"°" + Latitude(20u"°") == Latitude(20u"°") + 10u"°" == Latitude(30u"°")
-    @test Longitude(20u"°") - 10u"°" == Longitude(10u"°")
-    @test Latitude(20u"°") - 10u"°" == Latitude(10u"°")
-    @test (1 // 2) * π * u"rad" + Longitude(20u"°") == Longitude(20u"°") + (1 // 2) * π * u"rad" == Longitude(110u"°")
-    @test (1 // 2) * π * u"rad" + Latitude(0u"°") == Latitude(0u"°") + (1 // 2) * π * u"rad" == Latitude(90u"°")
-    @test Longitude(180 * u"°") - (1 // 2) * π * u"rad" == Longitude(90u"°")
-    @test Latitude(90u"°") - (1 // 2) * π * u"rad" == Latitude(0u"°")
+    @test 50u"m" + Depth(5u"km") == Depth(5u"km") + 50u"m" == 5050u"m"
+    @test Depth(5u"km") - 50u"m" == 4950u"m"
+    @test 10u"°" + Longitude(20u"°") == Longitude(20u"°") + 10u"°" == 30u"°"
+    @test 10u"°" + Latitude(20u"°") == Latitude(20u"°") + 10u"°" == 30u"°"
+    @test Longitude(20u"°") - 10u"°" == 10u"°"
+    @test Latitude(20u"°") - 10u"°" == 10u"°"
+    @test (1 // 2) * π * u"rad" + Longitude(20u"°") == Longitude(20u"°") + (1 // 2) * π * u"rad" == 110u"°"
+    @test (1 // 2) * π * u"rad" + Latitude(0u"°") == Latitude(0u"°") + (1 // 2) * π * u"rad" == 90u"°"
+    @test Longitude(180 * u"°") - (1 // 2) * π * u"rad" == 90u"°"
+    @test Latitude(90u"°") - (1 // 2) * π * u"rad" == 0u"°"
     # TODO: Longitude over 180°, Latitude for over 90° are not tested yet.
 
     # # It is intended that deg_E/N is designed to be not compatible with Longitude/Latitude.
     # Must to fail if the dimension is different:
-    @test_throws MethodError Longitude(32u"°") + 8u"deg_N"
-    @test_throws MethodError Latitude(32u"°") + 8u"deg_E"
+    @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_N"
+    @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_E"
     # Designed to make code to be easily maintainable and avoid ambiguity:
     @test_throws UnitIncompatible Longitude(32u"°") + 8u"deg_E" == Longitude(40u"°")
     @test_throws UnitIncompatible Latitude(32u"°") + 8u"deg_N" == Latitude(40u"°")
