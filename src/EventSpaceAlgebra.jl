@@ -48,7 +48,7 @@ export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, 
 export AnySizeScale, EventPointSize
 
 include("eventpoint.jl")
-export EventPoint, ArbitraryPoint, shift!
+export EventPoint, ArbitraryPoint, ENUPoint, shift!
 
 using Distances, Geodesy
 include("distances.jl")

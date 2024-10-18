@@ -57,12 +57,13 @@ end
 haversine_distance(t1::T, t2::T) where {T<:Tuple{<:Latitude,<:Longitude}} = haversine_distance(t1..., t2...)
 haversine_distance(t1::T, t2::T) where {T<:Tuple{<:Longitude,<:Latitude}} = haversine_distance(reverse(t1)..., reverse(t2)...)
 
+const LLAUnit = (lat=u"°", lon=u"°", alt=u"m")
 
 function Geodesy.LLA(lat::Latitude, lon::Longitude, dep::Depth)
     LLA(
         lat.value.val,
         lon.value.val,
-        -uconvert(u"m", dep.value).val
+        -uconvert(LLAUnit.alt, dep.value).val
     )
 end
 
@@ -73,6 +74,9 @@ Geodesy.ECEF(evt::AbstractLLPoint; kwargs...) = ECEF(evt.lat, evt.lon, evt.depth
 
 Geodesy.ENU(evt::AbstractLLPoint, ref::AbstractLLPoint; datum=wgs84) = ENU(LLA(evt), LLA(ref), datum)
 
+function ENUPoint(evt::AbstractLLPoint, ref::AbstractLLPoint; kwargs...)
+    ENUPoint((ENU(evt, ref) .* LLAUnit.alt)...)
+end
 
 # # Optional
 # Geodesy.LLA(lon::Longitude, lat::Latitude, dep::Depth) = LLA(lat, lon, dep)

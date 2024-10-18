@@ -1,4 +1,11 @@
 abstract type AbstractLLPoint end
+abstract type AbstractENUPoint end
+
+struct ENUPoint{T<:Real,U} <: AbstractENUPoint
+    x::Quantity{T,Unitful.𝐋,U}
+    y::Quantity{T,Unitful.𝐋,U}
+    z::Quantity{T,Unitful.𝐋,U}
+end
 
 """
 
