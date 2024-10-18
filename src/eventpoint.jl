@@ -8,7 +8,12 @@ mutable struct XYZT{T1,T2,T3,T4,U1,U2,U3,U4}
     ref::AbstractLLPoint
 end
 
-
+mutable struct XYZ{T1,T2,T3,U1,U2,U3}
+    x::Quantity{T1,Unitful.𝐋,U1}
+    y::Quantity{T2,Unitful.𝐋,U2}
+    z::Quantity{T3,Unitful.𝐋,U3}
+    ref::AbstractLLPoint
+end
 """
 
 # Example

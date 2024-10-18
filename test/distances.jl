@@ -70,16 +70,27 @@ end
 
     daan = latlon(25.033287104794507, 121.54342755567457)
 
-    apt1 = ArbitraryPoint(taipei101..., Depth(0u"km"))
-    ref1 = ArbitraryPoint(daan..., Depth(0u"km"))
+    apt1 = ArbitraryPoint(EventTimeMS(0.0), taipei101..., Depth(0u"km"))
+    ref1 = ArbitraryPoint(EventTimeJD(0.0), daan..., Depth(0u"km"))
     enu1 = ENU(apt1, ref1)
-    enupt1 = ENUPoint(apt1, ref1)
+
+    enupt1 = XYZ(apt1, ref1)
     @test enu1.e == enupt1.x.val
     @test enu1.n == enupt1.y.val
     @test enu1.u == enupt1.z.val
     @test enupt1.ref.lat == ref1.lat
     @test enupt1.ref.lon == ref1.lon
     @test enupt1.ref.depth == ref1.depth
+
+    enupt1 = XYZT(apt1, ref1)
+    @test enu1.e == enupt1.x.val
+    @test enu1.n == enupt1.y.val
+    @test enu1.u == enupt1.z.val
+    @test enupt1.ref.lat == ref1.lat
+    @test enupt1.ref.lon == ref1.lon
+    @test enupt1.ref.depth == ref1.depth
+    @test enupt1.ref.time == ref1.time
+    @test ref1.time + enupt1.t == apt1.time
 
 
     @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters
