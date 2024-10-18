@@ -108,7 +108,7 @@ end
         uconvert!(uuu, xyz1)
         @test 0.001 * x0 == xyz1.x.val == xyzt1.x.val
         @test 100 * y0 == xyz1.y.val == xyzt1.y.val
-        @test 0.1 * z0 == xyz1.z.val == xyzt1.z.val
+        @test 0.001 * z0 == xyz1.z.val == xyzt1.z.val
 
         uconvert!(u"cm", u"hr", xyzt1)
         @test_throws MethodError uconvert!(u"cm", u"hr", xyz1)
