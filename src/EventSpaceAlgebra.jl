@@ -40,7 +40,7 @@ export LLA, ECEF, ENU
 
 
 include("uconvert.jl")
-export uconvert
+export uconvert, uconvert!
 
 include("timespacetypes.jl")
 # include("algebra/sameunit.jl")

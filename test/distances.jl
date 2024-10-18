@@ -74,24 +74,54 @@ end
     ref1 = ArbitraryPoint(EventTimeJD(0.0), daan..., Depth(0u"km"))
     enu1 = ENU(apt1, ref1)
 
-    enupt1 = XYZ(apt1, ref1)
-    @test enu1.e == enupt1.x.val
-    @test enu1.n == enupt1.y.val
-    @test enu1.u == enupt1.z.val
-    @test enupt1.ref.lat == ref1.lat
-    @test enupt1.ref.lon == ref1.lon
-    @test enupt1.ref.depth == ref1.depth
+    xyz1 = XYZ(apt1, ref1)
+    @test enu1.e == xyz1.x.val
+    @test enu1.n == xyz1.y.val
+    @test enu1.u == xyz1.z.val
+    @test xyz1.ref.lat == ref1.lat
+    @test xyz1.ref.lon == ref1.lon
+    @test xyz1.ref.depth == ref1.depth
 
-    enupt1 = XYZT(apt1, ref1)
-    @test enu1.e == enupt1.x.val
-    @test enu1.n == enupt1.y.val
-    @test enu1.u == enupt1.z.val
-    @test enupt1.ref.lat == ref1.lat
-    @test enupt1.ref.lon == ref1.lon
-    @test enupt1.ref.depth == ref1.depth
-    @test enupt1.ref.time == ref1.time
-    @test ref1.time + enupt1.t == apt1.time
+    xyzt1 = XYZT(apt1, ref1)
+    x0 = xyzt1.x.val # in meters
+    y0 = xyzt1.y.val # in meters
+    z0 = xyzt1.z.val # in meters
+    t0 = uconvert(u"s", xyzt1.t).val # ensures to be seconds
 
+    @test x0 == xyz1.x.val
+    @test y0 == xyz1.y.val
+    @test z0 == xyz1.z.val
+
+    @test enu1.e == xyzt1.x.val
+    @test enu1.n == xyzt1.y.val
+    @test enu1.u == xyzt1.z.val
+    @test xyzt1.ref.lat == ref1.lat
+    @test xyzt1.ref.lon == ref1.lon
+    @test xyzt1.ref.depth == ref1.depth
+    @test xyzt1.ref.time == ref1.time
+    @test ref1.time + xyzt1.t == apt1.time
+
+    @testset "uconvert!" begin
+        uuuu = (u"km", u"cm", u"km", u"hr")
+        uuu = (u"km", u"cm", u"km")
+        uconvert!(uuuu, xyzt1)
+        uconvert!(uuu, xyz1)
+        @test 0.001 * x0 == xyz1.x.val == xyzt1.x.val
+        @test 100 * y0 == xyz1.y.val == xyzt1.y.val
+        @test 0.1 * z0 == xyz1.z.val == xyzt1.z.val
+
+        uconvert!(u"cm", u"hr", xyzt1)
+        @test_throws MethodError uconvert!(u"cm", u"hr", xyz1)
+        uconvert!(u"cm", xyz1)
+
+        @test 100 * x0 == xyz1.x.val == xyzt1.x.val
+        @test 100 * y0 == xyz1.y.val == xyzt1.y.val
+        @test 100 * z0 == xyz1.z.val == xyzt1.z.val
+        @test 1 / 3600 * t0 == xyzt1.t.val
+
+
+
+    end
 
     @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters
     @test isapprox(norm(enu1, 2), 1948.8, atol=1) # google earth's distance
