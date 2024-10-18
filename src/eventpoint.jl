@@ -1,26 +1,26 @@
 abstract type AbstractLLPoint end
 abstract type AbstractCartesianPoint end
 
-const UnitfulQuantityLength = Unitful.Quantity{<:Real,Unitful.𝐋,<:Unitful.FreeUnits}
-const UnitfulQuantityTime = Unitful.Quantity{<:Real,Unitful.𝐓,<:Unitful.FreeUnits}
+UnitfulQuantityLength{T} = Unitful.Quantity{T,Unitful.𝐋,<:Unitful.FreeUnits}
+UnitfulQuantityTime{T} = Unitful.Quantity{T,Unitful.𝐓,<:Unitful.FreeUnits}
 
 # KEYNOTE: Define XYZT as parametric type results in auto conversion
-# - If XYZT is defined as parametric type, e.g., `XYZ{T1,T2,T3,U1,U2,U3}` with `x::Quantity{T1,Unitful.𝐋,U1} ...`,
+# - If XYZT is defined as parametric type of Unit, e.g., `XYZ{T,U}` with `x::Quantity{T,Unitful.𝐋,U} ...`,
 #   `uconvert!` basically pours water into sand. For example, for `pt::XYZT{U}` where `U` is the unit of meter,
 #   `x_in_km = uconvert(u"km", pt.x)` is a `Quantity` of unit in kilometer; however, in the step `pt.x = x_in_km` the unit is converted back `u"m"`
 #   since `XYZT` is fixed to have the parametric type `U`.
-mutable struct XYZT <: AbstractCartesianPoint
-    x::UnitfulQuantityLength
-    y::UnitfulQuantityLength
-    z::UnitfulQuantityLength
-    t::UnitfulQuantityTime
+mutable struct XYZT{T1,T2} <: AbstractCartesianPoint
+    x::UnitfulQuantityLength{T1}
+    y::UnitfulQuantityLength{T1}
+    z::UnitfulQuantityLength{T1}
+    t::UnitfulQuantityTime{T2}
     ref::AbstractLLPoint
 end
 
-mutable struct XYZ <: AbstractCartesianPoint
-    x::UnitfulQuantityLength
-    y::UnitfulQuantityLength
-    z::UnitfulQuantityLength
+mutable struct XYZ{T1} <: AbstractCartesianPoint
+    x::UnitfulQuantityLength{T1}
+    y::UnitfulQuantityLength{T1}
+    z::UnitfulQuantityLength{T1}
     ref::AbstractLLPoint
 end
 """
