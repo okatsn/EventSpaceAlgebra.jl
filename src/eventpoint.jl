@@ -1,11 +1,13 @@
 abstract type AbstractLLPoint end
-abstract type AbstractENUPoint end
 
-struct ENUPoint{T<:Real,U} <: AbstractENUPoint
-    x::Quantity{T,Unitful.𝐋,U}
-    y::Quantity{T,Unitful.𝐋,U}
-    z::Quantity{T,Unitful.𝐋,U}
+mutable struct XYZT{T1,T2,T3,T4,U1,U2,U3,U4}
+    x::Quantity{T1,Unitful.𝐋,U1}
+    y::Quantity{T2,Unitful.𝐋,U2}
+    z::Quantity{T3,Unitful.𝐋,U3}
+    t::Quantity{T4,Unitful.𝐓,U4}
+    ref::AbstractLLPoint
 end
+
 
 """
 

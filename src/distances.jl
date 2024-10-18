@@ -74,8 +74,11 @@ Geodesy.ECEF(evt::AbstractLLPoint; kwargs...) = ECEF(evt.lat, evt.lon, evt.depth
 
 Geodesy.ENU(evt::AbstractLLPoint, ref::AbstractLLPoint; datum=wgs84) = ENU(LLA(evt), LLA(ref), datum)
 
-function ENUPoint(evt::AbstractLLPoint, ref::AbstractLLPoint; kwargs...)
-    ENUPoint((ENU(evt, ref) .* LLAUnit.alt)...)
+function XYZT(evt::AbstractLLPoint, ref::AbstractLLPoint)
+    XYZT(
+        (ENU(evt, ref) .* LLAUnit.alt)...,
+        ref
+    )
 end
 
 # # Optional

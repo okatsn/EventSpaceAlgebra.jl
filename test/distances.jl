@@ -77,6 +77,9 @@ end
     @test enu1.e == enupt1.x.val
     @test enu1.n == enupt1.y.val
     @test enu1.u == enupt1.z.val
+    @test enupt1.ref.lat == ref1.lat
+    @test enupt1.ref.lon == ref1.lon
+    @test enupt1.ref.depth == ref1.depth
 
 
     @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters

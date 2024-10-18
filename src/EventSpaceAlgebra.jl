@@ -23,6 +23,22 @@ export Depth
 include("algebra/divmultiple.jl")
 
 
+include("magnitudescales.jl")
+export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, MagnitudeScale
+export AnySizeScale, EventPointSize
+
+include("eventpoint.jl")
+export EventPoint, ArbitraryPoint, ENUPoint, shift!
+
+using Distances, Geodesy
+include("distances.jl")
+export EARTH_RADIUS
+export haversine
+export LLA, ECEF, ENU
+
+
+
+
 include("uconvert.jl")
 export uconvert
 
@@ -41,20 +57,6 @@ export latlon_normalize
 using Dates
 include("datetimeconv.jl")
 export to_datetime
-
-
-include("magnitudescales.jl")
-export EventMagnitude, MomentMagnitude, SurfaceWaveMagnitude, RichterMagnitude, MagnitudeScale
-export AnySizeScale, EventPointSize
-
-include("eventpoint.jl")
-export EventPoint, ArbitraryPoint, ENUPoint, shift!
-
-using Distances, Geodesy
-include("distances.jl")
-export EARTH_RADIUS
-export haversine
-export LLA, ECEF, ENU
 
 
 
