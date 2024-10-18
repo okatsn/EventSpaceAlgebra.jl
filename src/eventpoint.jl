@@ -23,6 +23,10 @@ mutable struct XYZ{T1} <: AbstractCartesianPoint
     z::UnitfulQuantityLength{T1}
     ref::AbstractLLPoint
 end
+
+
+get_value(xyzt::AbstractCartesianPoint)
+
 """
 
 # Example

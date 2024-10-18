@@ -52,3 +52,6 @@ function uconvert!(ut::UnitfulUnitTime, pt::XYZT)
     pt.t = uconvert(ut, pt.t)
     nothing
 end
+
+# For easy use with DataFrames.transform
+Unitful.uconvert(u) = x -> uconvert(u, x)
