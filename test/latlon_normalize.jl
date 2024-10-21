@@ -33,7 +33,7 @@
     Latitude(-10 * u"°") / 5
 end
 
-@testset "Operation with TemporaryHolder" begin
+@testset "Unit after Operation" begin
     # # test where {T<:EventCoordinate}
     @test Depth(5u"m") + Depth(1u"m") == 6u"m"
     @test Longitude(5u"°") + Longitude(1u"°") == 6u"°"

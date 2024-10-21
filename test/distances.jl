@@ -118,10 +118,21 @@ end
         @test 100 * y0 == xyz1.y.val == xyzt1.y.val
         @test 100 * z0 == xyz1.z.val == xyzt1.z.val
         @test 1 / 3600 * t0 == xyzt1.t.val
-
-
-
     end
+
+
+    @testset "Test `get_value`, `get_unit`" begin
+        for s in [:x, :y, :z]
+            @test getproperty(xyzt1, s) == get_value(xyzt1, s) * get_unit(xyzt1, s)
+            @test getproperty(xyz1, s) == get_value(xyzt1, s) * get_unit(xyzt1, s)
+        end
+        @test getproperty(xyzt1, :t) == get_value(xyzt1, :t) * get_unit(xyzt1, :t)
+        @test get_values(xyzt1) == get_value.(Ref(xyzt1), [:x, :y, :z, :t])
+        @test get_values(xyz1) == get_value.(Ref(xyzt1), [:x, :y, :z])
+        @test get_values(xyzt1) .* get_units(xyzt1) == [getproperty(xyzt1, s) for s in [:x, :y, :z, :t]]
+        @test get_values(xyz1) .* get_units(xyz1) == [getproperty(xyz1, s) for s in [:x, :y, :z,]]
+    end
+
 
     @test isapprox(haversine(taipei101, daan), norm(enu1, 2), atol=10) # Haversine v.s. ENU distance with error below 10 meters
     @test isapprox(norm(enu1, 2), 1948.8, atol=1) # google earth's distance

@@ -25,7 +25,20 @@ mutable struct XYZ{T1} <: AbstractCartesianPoint
 end
 
 
-get_value(xyzt::AbstractCartesianPoint)
+get_value(xyzt::AbstractCartesianPoint, symb::Symbol) = getproperty(xyzt, symb).val
+get_unit(xyzt::AbstractCartesianPoint, symb::Symbol) = unit(getproperty(xyzt, symb))
+
+get_values(xyzt::AbstractCartesianPoint, symbs::Vector{Symbol}) = get_value.(Ref(xyzt), symbs)
+
+get_units(xyzt::AbstractCartesianPoint, symbs::Vector{Symbol}) = get_unit.(Ref(xyzt), symbs)
+
+
+get_values(p::XYZ) = get_values(p, [:x, :y, :z])
+get_values(p::XYZT) = get_values(p, [:x, :y, :z, :t])
+
+get_units(p::XYZ) = get_units(p, [:x, :y, :z])
+get_units(p::XYZT) = get_units(p, [:x, :y, :z, :t])
+
 
 """
 
