@@ -201,3 +201,24 @@ end
         atol=500) # error: ≤ 10 meters
 
 end
+
+@testset "centerpoint" begin
+    using Unitful, Statistics
+    xs = (5 .+ 3 * randn(10)) * u"km"
+    ys = (-2 .+ 1 * randn(10)) * u"m"
+    zs = (0 .- 3 * randn(10)) * u"km"
+    ts = (rand(1:10, 10)) * u"s"
+    ref = ArbitraryPoint(EventTimeMS(0), Latitude(21.24u"°"), Longitude(121.04u"°"), Depth(5)) |> Ref
+
+    meanresult1 = centerpoint(XYZ.(xs, ys, zs, ref))
+    meanresult2 = centerpoint(XYZT.(xs, ys, zs, ts, ref))
+
+    @test getproperty(meanresult1, :x) == mean(xs)
+    @test getproperty(meanresult1, :y) == mean(ys)
+    @test getproperty(meanresult1, :z) == mean(zs)
+    @test getproperty(meanresult2, :x) == mean(xs)
+    @test getproperty(meanresult2, :y) == mean(ys)
+    @test getproperty(meanresult2, :z) == mean(zs)
+    @test getproperty(meanresult2, :t) == mean(ts)
+
+end

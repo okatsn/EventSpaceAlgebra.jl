@@ -30,6 +30,7 @@ export AnySizeScale, EventPointSize
 include("eventpoint.jl")
 export EventPoint, ArbitraryPoint, XYZT, XYZ, shift!
 export get_value, get_unit, get_values, get_units
+export centerpoint
 
 using Distances, Geodesy
 include("distances.jl")

@@ -147,3 +147,23 @@ end
 # - `haversine_distance` between two `EventPoint`.
 # - Seemingly that there is already a function `Distances.haversine`: https://discourse.julialang.org/t/geodesy-how-to-calculate-the-straight-line-distance-between-two-locations-which-is-represented-by-longitude-and-latitude/19984/6?u=okatsn
 # - Besides `haversine_distance`, you also needs to build `geodesic_distance_with_depth`.
+
+
+function centerpoint(ps::Vector{<:XYZ})
+    XYZ(
+        mean(getproperty.(ps, :x)),
+        mean(getproperty.(ps, :y)),
+        mean(getproperty.(ps, :z)),
+        only(unique(getproperty.(ps, :ref)))
+    )
+end
+
+function centerpoint(ps::Vector{<:XYZT})
+    XYZT(
+        mean(getproperty.(ps, :x)),
+        mean(getproperty.(ps, :y)),
+        mean(getproperty.(ps, :z)),
+        mean(getproperty.(ps, :t)),
+        only(unique(getproperty.(ps, :ref)))
+    )
+end
