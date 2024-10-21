@@ -110,6 +110,15 @@ end
         @test 100 * y0 == xyz1.y.val == xyzt1.y.val
         @test 0.001 * z0 == xyz1.z.val == xyzt1.z.val
 
+        for i in 1:10 # test conversion of the same unit for multiple times
+            uconvert!(uuuu, xyzt1)
+            uconvert!(uuu, xyz1)
+            @test 0.001 * x0 == xyz1.x.val == xyzt1.x.val
+            @test 100 * y0 == xyz1.y.val == xyzt1.y.val
+            @test 0.001 * z0 == xyz1.z.val == xyzt1.z.val
+        end
+
+
         uconvert!(u"cm", u"hr", xyzt1)
         @test_throws MethodError uconvert!(u"cm", u"hr", xyz1)
         uconvert!(u"cm", xyz1)
