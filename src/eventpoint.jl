@@ -149,7 +149,7 @@ end
 # - Besides `haversine_distance`, you also needs to build `geodesic_distance_with_depth`.
 
 
-function centerpoint(ps::Vector{<:XYZ})
+function centerpoint(ps::AbstractVector{<:XYZ})
     XYZ(
         mean(getproperty.(ps, :x)),
         mean(getproperty.(ps, :y)),
@@ -158,7 +158,7 @@ function centerpoint(ps::Vector{<:XYZ})
     )
 end
 
-function centerpoint(ps::Vector{<:XYZT})
+function centerpoint(ps::AbstractVector{<:XYZT})
     XYZT(
         mean(getproperty.(ps, :x)),
         mean(getproperty.(ps, :y)),
