@@ -221,4 +221,7 @@ end
     @test getproperty(meanresult2, :z) == mean(zs)
     @test getproperty(meanresult2, :t) == mean(ts)
 
+    # test units are invariant
+    @test get_units(meanresult1) == [u"km", u"m", u"km"]
+    @test get_units(meanresult2) == [u"km", u"m", u"km", u"s"]
 end
