@@ -1,74 +1,89 @@
-struct CoordinateMismatch <: Exception end
-Base.showerror(io::IO, e::CoordinateMismatch) = print(io, "Coordinate mistach.")
+# # For EventTime
 
 """
-`Base.:-(gs1, gs2)` do subtraction of `gs1` and `gs2` of the `sameunit`.
-It throws `CoordinateMismatch` error despite the following cases:
+`Base.:-(t1::EventTime, t2::EventTime)`.
+Abstract subtraction between two `EventTime`, which are converted to `DateTime` and output their subraction results.
 """
-function Base.:-(gs1, gs2)
-    throw(CoordinateMismatch())
+# TODO: Rename "comparisonop.jl" as it includes EventTime-wise subtraction.
+
+function Base.:-(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
+    EventTime{T,U}(t1.value - t2)
+end
+
+function Base.:-(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
+    EventTime{T,U}(t1.value - Quantity(Δt))
+end
+
+function Base.:+(t1::EventTime{T,U}, t2::Quantity) where {T} where {U}
+    EventTime{T,U}(t1.value + t2)
+end
+
+function Base.:+(t1::EventTime{T,U}, Δt::Dates.AbstractTime) where {T} where {U}
+    EventTime{T,U}(t1.value + Quantity(Δt))
 end
 
 
-function _same_unit_subtraction(gs1, gs2)
-    sameunit(gs1, gs2)
-    Distance(get_value(gs1) - get_value(gs2), get_unit(gs1))
+
+# # Spatial Coordinate
+# Must convert to degree before operation, because something like `2 * π * u"rad" + 1u"°"` returns Float64.
+
+for op in (:+, :-), AC in (:Latitude, :Longitude, :Depth)
+    @eval begin
+        function Base.$op(t1::$AC, t2::Unitful.AbstractQuantity)
+            $op(t1.value, t2)
+        end
+        # only `Longitude/Latitude` needs unit conversion if t2 is of unit radian.
+        if $AC in (:Longitude, :Latitude)
+        else
+            function Base.$op(t1::$AC, t2::EventAngleRadian)
+                $op(t1, uconvert(u"°", t2))
+            end
+        end
+    end
 end
 
-"""
-`Base.:-(gs1::T, gs2::T) where {T<:Coordinate}` returns a `Distance`.
-`gs1` and `gs2` of the same `Coordinate` can be subtracted.
-"""
-function Base.:-(gs1::T, gs2::T) where {T<:Coordinate}
-    _same_unit_subtraction(gs1, gs2)
+# # Ensure the commutative property:
+# KEYNOTE: Be aware that Unitful.AbstractQuantity <: Number
+const NonEventQuantities = Union{Dates.AbstractTime,Unitful.AbstractQuantity}
+
+# # Commutative property for `+`
+function Base.:+(t1::NonEventQuantities, t2::EventCoordinate)
+    +(t2, t1)
 end
 
-"""
-`Base.:-(gs1::Coordinate, gs2::Distance)` returns a `Distance`.
-`gs1::Coordinate` can be subtracted by `gs2::Distance`.
-"""
-function Base.:-(gs1::Coordinate, gs2::Distance)
-    _same_unit_subtraction(gs1, gs2)
+for AC in (:Latitude, :Longitude, :Depth)
+    @eval function Base.:+(a::$AC, b::$AC)
+        +(a.value, b.value)
+    end
 end
 
-
-"""
-`Base.:-(gs1::Distance, gs2::Distance)` returns a `Distance`.
-`gs1::Distance` can be subtracted by `gs2::Distance`.
-"""
-function Base.:-(gs1::Distance, gs2::Distance)
-    _same_unit_subtraction(gs1, gs2)
-end
-
-"""
-`_create_add(gs1, gs2)` do `sameunit` check for `gs1` and `gs2`,
-performs addition of their `value`, and return a copy of `gs1` with the `value` of `gs1` the sum of `value` of the input arguments.
-"""
-function _create_add(gs1, gs2)
-    sameunit(gs1, gs2)
-    newval = get_value(gs1) + get_value(gs2)
-    return set_value(gs1, newval)
-end
-
-"""
-`Base.:+(gs1::Coordinate, gs2::Distance)` returns a copy of `Coordinate` of the same type as `gs1`, with its `value` being the sum of the values of `gs1` and `gs2`.
-"""
-Base.:+(gs1::Coordinate, gs2::Distance) = _create_add(gs1, gs2)
-
-"""
-Addition is commutative.
-Thus, `+(gs2::Distance, gs1::Coordinate)` falls back to `+(gs1, gs2)`.
-"""
-Base.:+(gs2::Distance, gs1::Coordinate) = +(gs1, gs2)
+# # Postponed because of there is no immediate necessity.
+# - "+" functions for eventTime scale with duration.
+# - "+" functions for Longitude (Latitude) with Angle units.
+# - "-" functions for Longitude (Latitude) with Longitude (Latitude) of a different unit. (output: Quantity of unit Angle)
+# - "-" functions for Longitude (Latitude) with Angle units. (output: Longitude and Latitude)
 
 
-"""
-`+(gs1::T, gs2::T) where {T<:Distance}`
-performs the addition of the two `Distance` of the same type. It returns `Distance` of the same unit, with the value of their sum.
-"""
-Base.:+(gs1::T, gs2::T) where {T<:Distance} = _create_add(gs1, gs2)
+# # Unfinished codes:
+# Latitude and Longitude operations
+# function Base.:+(l::Longitude, delta::EventAngleDegree)
+#     Longitude(l.value + delta)
+# end
 
-"""
-Otherwise, throws error `CoordinateMismatch`.
-"""
-Base.:+(gs1, gs2) = throw(CoordinateMismatch())
+# function Base.:-(lat::Latitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Latitude{U}(lat.value - delta)
+# end
+
+# # Longitude operations
+# function Base.:+(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Longitude{U}(lon.value + delta)
+# end
+
+# function Base.:-(lon::Longitude{U}, delta::Quantity{<:Number,U}) where {U}
+#     Longitude{U}(lon.value - delta)
+# end
+
+
+# for op in (:+, :-)
+
+# end
