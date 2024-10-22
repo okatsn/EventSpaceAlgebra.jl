@@ -48,8 +48,15 @@ for op in (:(==), :isapprox, :isless)
     end
 end
 
-for op in (:(==), :isapprox)
+for op in (:(==), :isapprox, :isless)
     @eval function Base.$op(t1::EventMagnitude{A}, t2::EventMagnitude{B}) where {A,B}
         throw(CoordinateMismatch())
     end
 end
+
+
+function Base.:(==)(a::EventMagnitude, b::Real)
+    throw(CoordinateMismatch())
+end
+
+Base.:(==)(a::Real, b::EventMagnitude) = ==(b, a)

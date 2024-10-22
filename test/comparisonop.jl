@@ -61,3 +61,37 @@ end
     # @test isapprox(EventTimeJD(dt), dt)
     @test isapprox(EventTime(121.33u"jd") - 110.1u"d", EventTime(11.32u"jd"))
 end
+
+@testset "Compare magnitude" begin
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{RichterMagnitude}(5) == EventMagnitude{MomentMagnitude}(5)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{RichterMagnitude}(5) < EventMagnitude{MomentMagnitude}(5)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{RichterMagnitude}(5) > EventMagnitude{MomentMagnitude}(5)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{SurfaceWaveMagnitude}(5) == EventMagnitude{MomentMagnitude}(5)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{SurfaceWaveMagnitude}(5) < EventMagnitude{MomentMagnitude}(5)
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{SurfaceWaveMagnitude}(5) > EventMagnitude{MomentMagnitude}(5)
+
+    @test EventMagnitude{RichterMagnitude}(5) == EventMagnitude{RichterMagnitude}(5.0)
+    @test EventMagnitude{RichterMagnitude}(5) >= EventMagnitude{RichterMagnitude}(5.0)
+    @test EventMagnitude{RichterMagnitude}(5) <= EventMagnitude{RichterMagnitude}(5.0)
+    @test EventMagnitude{RichterMagnitude}(5) > EventMagnitude{RichterMagnitude}(4.9)
+    @test EventMagnitude{RichterMagnitude}(5) < EventMagnitude{RichterMagnitude}(5.1)
+
+    @test_throws EventSpaceAlgebra.CoordinateMismatch EventMagnitude{RichterMagnitude}(5) == 5.0
+    @test_throws MethodError EventMagnitude{RichterMagnitude}(5) >= 5.0
+    @test_throws MethodError EventMagnitude{RichterMagnitude}(5) <= 5.0
+    @test_throws MethodError EventMagnitude{RichterMagnitude}(5) > 4.9
+    @test_throws MethodError EventMagnitude{RichterMagnitude}(5) < 5.1
+
+    @test_throws EventSpaceAlgebra.CoordinateMismatch 5 == EventMagnitude{RichterMagnitude}(5.0)
+    @test_throws MethodError 5 >= EventMagnitude{RichterMagnitude}(5.0)
+    @test_throws MethodError 5 <= EventMagnitude{RichterMagnitude}(5.0)
+    @test_throws MethodError 5 > EventMagnitude{RichterMagnitude}(4.9)
+    @test_throws MethodError 5 < EventMagnitude{RichterMagnitude}(5.1)
+
+    @test_throws EventSpaceAlgebra.CoordinateMismatch isapprox(EventMagnitude{RichterMagnitude}(5), EventMagnitude{MomentMagnitude}(5))
+    @test_throws EventSpaceAlgebra.CoordinateMismatch isapprox(EventMagnitude{SurfaceWaveMagnitude}(5), EventMagnitude{MomentMagnitude}(5))
+    @test isapprox(EventMagnitude{RichterMagnitude}(5), EventMagnitude{RichterMagnitude}(5.0))
+    @test_throws MethodError isapprox(EventMagnitude{RichterMagnitude}(5), 5.0)
+    @test_throws MethodError isapprox(5, EventMagnitude{RichterMagnitude}(5.0))
+
+end
