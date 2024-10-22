@@ -19,3 +19,13 @@
     @test std(vmag) == std(v)
 
 end
+
+@testset "`get_value` and `get_unit` for EventPointSize" begin
+    @test get_unit(EventMagnitude{RichterMagnitude}(5)) == RichterMagnitude
+    @test get_unit(EventMagnitude{SurfaceWaveMagnitude}(5)) == SurfaceWaveMagnitude
+    @test get_unit(EventMagnitude{MomentMagnitude}(5)) == MomentMagnitude
+
+    @test get_value(EventMagnitude{RichterMagnitude}(5)) == 5.0
+    @test get_value(EventMagnitude{SurfaceWaveMagnitude}(5)) == 5.0
+    @test get_value(EventMagnitude{MomentMagnitude}(5)) == 5.0
+end

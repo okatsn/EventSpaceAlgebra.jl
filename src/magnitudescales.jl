@@ -5,13 +5,13 @@ struct MomentMagnitude <: MagnitudeScale end   # Mw
 struct RichterMagnitude <: MagnitudeScale end  # ML
 struct SurfaceWaveMagnitude <: MagnitudeScale end  # MS
 
-abstract type EventPointSize end
+abstract type EventPointSize{M} end
 
-struct EventMagnitude{M<:MagnitudeScale} <: EventPointSize
+struct EventMagnitude{M<:MagnitudeScale} <: EventPointSize{M}
     value::Float64
 end
 
-struct ArbitraryPointSize{M<:AnySizeScale} <: EventPointSize
+struct ArbitraryPointSize{M<:AnySizeScale} <: EventPointSize{M}
     value::Float64
 end
 
@@ -60,3 +60,8 @@ function Base.:(==)(a::EventMagnitude, b::Real)
 end
 
 Base.:(==)(a::Real, b::EventMagnitude) = ==(b, a)
+
+
+
+get_value(ec::EventPointSize) = ec.value
+get_unit(::EventPointSize{M}) where {M} = M

@@ -253,3 +253,6 @@ EventTimeJD(dt::DateTime) = EventTimeJD(Dates.datetime2julian(dt))
 
 
 # TODO: Use Holy trait for dispatching "spatial" (e.g., Longitude) and "temporal" (e.g., eventTime) Coordinate.
+
+get_value(ec::EventCoordinate) = ec.value.val
+get_unit(ec::EventCoordinate) = ec.value |> unit
